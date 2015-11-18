@@ -1,0 +1,854 @@
+
+<HTML >
+<HEAD>
+
+<META http-equiv=Content-Type content="text/html; charset=utf-8">
+<TITLE>广东外语外贸大学卫星录播系统</TITLE>
+
+<LINK media=all href="MeaBox/style.css" type=text/css rel=stylesheet>
+
+<script language="javascript" src="base64.js"></script>
+
+<script language=javascript>
+<!--
+var isCharge=0;
+var userChargeStyle=0;
+function isEnoughCharge(fileid,username)
+{
+   var src="vod_isEnoughCharge.asp?fileid="+fileid+"&UserName="+escape(username);
+	    var oBao = new ActiveXObject("Microsoft.XMLHTTP");
+            oBao.open("POST",src,false);
+            oBao.send();
+    var strResult = unescape(oBao.responseText);
+    //将字符串分开.
+    return strResult;
+}
+function doCharge(playid,curUsername)
+{
+   var src="vod_charge.asp?fileid="+playid+"&Username="+escape(curUsername);
+	    var oBao = new ActiveXObject("Microsoft.XMLHTTP");
+            oBao.open("POST",src,false);
+            oBao.send();
+    //alert(src);
+}
+
+function doRecordLog(playid,curUsername)
+{
+   var src="RecorddianboLog.asp?fileid="+playid+"&Username="+escape(curUsername);
+	    var oBao = new ActiveXObject("Microsoft.XMLHTTP");
+            oBao.open("POST",src,false);
+            oBao.send();
+}
+
+function AddMyDianboForm(playid,curUsername)
+{
+   if (curUsername!="" && curUsername!="Anonymous")
+   {
+   var src="AddMyDianboForm.asp?fileid="+playid+"&Username="+escape(curUsername);
+	    var oBao = new ActiveXObject("Microsoft.XMLHTTP");
+            oBao.open("POST",src,false);
+            oBao.send();
+    var strResult = unescape(oBao.responseText);
+    //将字符串分开.
+    if(strResult==1)document.getElementById('P'+playid.toString()).style.color="#00cc00";
+   }
+   else
+   {
+    alert("请先登录后再操作！");
+   }
+   
+}
+
+
+var isSetupPlayer=0;
+function checksetup()
+{ 
+  if( isSetupPlayer==0)
+    {
+      try{
+             document.getElementById("pic").filters.item("DXImageTransform.Microsoft.AlphaImageLoader").src = "C:\\Program Files\\XSplay\\gvod.gif";
+             isSetupPlayer=1;
+             return true;
+         }
+      catch(e)
+         {  
+            if(IsTishiDown()!=0)
+            {
+              if(confirm("本地没有安装客户端,点击“确定”后进行自动下载!"))
+              {
+                 window.location.href="../downloads/xsplay.exe";
+              }
+              if(confirm("以后不再提示下载安装!"))
+              {
+                 SetIsTishiDown(0);
+              }
+              return false;
+            }
+            else
+            {
+              return true;
+            }
+         }
+     }
+   else return true;
+} 
+
+function openWin(strurl,fileid,username,filechargerate){
+  if(checksetup())
+  {        
+  if (filechargerate>0 && parseInt(isCharge)==1 && parseInt(userChargeStyle)==5)
+  {
+      if(confirm("点播该节目需要扣除"+filechargerate+"元的费用，确认要点播观看吗？"))
+      {
+         if(isEnoughCharge(fileid,username)!=1)
+         {
+            alert("对不起，您的账户余额不足，请先充值。");
+            return;
+         }
+      }
+      else
+      {
+        return;
+      }
+  }
+  var linksrc=strurl;
+  var wintitle="播放节目";
+  var WinZhibo=window.open(linksrc,wintitle,"width=510,height=440,location=no,menubar=no,resizable=no,status=yes,titlebar=no,toolbar=no","scrollbars=yes");
+  WinZhibo.focus();
+  }
+
+}
+
+function openWinDetail(strurl){
+   var linksrc=strurl;
+   var wintitle="详细节目";
+	var WinZhibo=window.open(linksrc,wintitle,"width=657,height=600,location=no,menubar=no,resizable=yes,status=yes,titlebar=no,toolbar=no,scrollbars=yes");
+	WinZhibo.focus();
+}
+
+function openWinPreview(strurl,fileid,username,filechargerate){
+  if(checksetup())
+  {        
+  var linksrc=strurl;
+  var wintitle="播放节目";
+  var WinZhibo=window.open(linksrc,wintitle,"width=510,height=440,location=no,menubar=no,resizable=yes,status=yes,titlebar=no,toolbar=no","scrollbars=yes");
+  WinZhibo.focus();
+  }
+
+}
+
+function doSearchSubmit()
+{
+  if (document.form_search.vk.value=='在此输入节目名称和关键词' || document.form_search.vk.value=='' ) return false;
+  else
+      document.form_search.submit();
+}
+
+
+
+
+
+//*************************************************************************************************************************888
+//点播历史记录
+function getCookieVal (offset) {
+　var endstr = document.cookie.indexOf (";", offset);
+　if (endstr == -1) endstr = document.cookie.length;
+return unescape(document.cookie.substring(offset, endstr));
+}
+
+
+function getCookie (name) {
+var arg = name + "=";
+var alen = arg.length;
+var clen = document.cookie.length;
+var i = 0;
+while (i < clen) {
+var j = i + alen;
+if (document.cookie.substring(i, j) == arg) return getCookieVal (j);
+i = document.cookie.indexOf(" ", i) + 1;
+if (i == 0) break;
+}
+　 return null;
+}
+
+function setCookie (name, value)
+{
+var exp = new Date();
+exp.setTime (exp.getTime()+3600000000);
+document.cookie = name + "=" + value + "; expires=" + exp.toGMTString();
+}
+////////////////////////////////////
+function SetIsTishiDown(isvalue)
+{
+   setCookie("Show_DownBox_info",isvalue);
+
+}
+function IsTishiDown()
+{
+　var Show_DownBox_info=getCookie("Show_DownBox_info");
+  var IsTishiDownbox=1;
+  if(Show_DownBox_info!=null || Show_DownBox_info!='')
+  {
+    IsTishiDownbox=Show_DownBox_info;
+  }
+  else
+  {
+    IsTishiDownbox=1;
+  }
+  return IsTishiDownbox;
+}
+
+
+function history_show()
+{　　　
+　var play_history_info=getCookie("play_history_info");
+　var content="";　
+　if(play_history_info!=null)
+　{
+　history_arg=play_history_info.split("_XStream");
+//  alert(history_arg);
+　var i;
+　for(i=0;i<=4;i++)
+　{
+　　if( history_arg[i]!=null  )
+　　{ 
+　　 if( history_arg[i]!="null"  )
+     {  
+　　   var wlink=history_arg[i].split("+");
+　　　 content=content+"<li><font color='#ff000'>↑</font>"+"<a href='javascript:void(0);' onclick=javascript:openWinDetail('"+wlink[1]+"');>"+unescape(wlink[0])+"</a></li>";
+      }
+　　}
+　}
+document.getElementById("playhistory").innerHTML=content;
+ }
+else
+　{document.getElementById("playhistory").innerHTML="<li>对不起，您没有任何浏览纪录</li>";}
+}
+//*********************************************************************************************************************8
+function dosubmit(){
+  var username=document.form_login.userName;
+  var pwd=document.form_login.Pwd;
+  if (username.value=='') {
+      alert("请输入用户名");
+      username.focus();
+      return false}
+  else if(pwd.value==''){
+      alert("请输入密码");
+      username.focus();
+      return false}
+  else{
+	  var src="vodAdmin/va_Login_do.asp?UserName="+escape(username.value)+"&Pwd="+escape(pwd.value);
+	  var oBao = new ActiveXObject("Microsoft.XMLHTTP");
+          oBao.open("POST",src,false);
+          oBao.send();
+    var strResult = unescape(oBao.responseText);
+    //alert(strResult);
+    var arrResult = strResult.split("@@@");
+    var result_is = arrResult[0];
+    var extrainfo = arrResult[1];
+    if (result_is==1)window.location.href="Vod_Index.asp";
+    else {
+        alert(extrainfo);
+        username.focus();
+        return false}
+  }
+}
+
+  function UserZhuce(){
+	window.open("../Userzhuce.asp","zhuce","width=800,height=560,location=no,menubar=no,resizable=yes,status=no,titlebar=no,toolbar=no");
+  }
+  
+  function modifyPersonalInfo(){
+	window.open("../Usermodifyinfo.asp","modifyPass","width=800,height=560,location=no,menubar=no,resizable=yes,status=no,titlebar=no,toolbar=no");
+  }
+  
+
+function onkeyboard(){
+  var KeyCode=event.keyCode;
+  //alert(KeyCode);
+  if (KeyCode==13){ document.form_login.Submit.click(); }
+}   
+
+function OpenPlayer(fileid,pname,fs,zimu,strFileType,username,filechargerate,ischarge,linkobj)
+{
+if(checksetup())
+{
+  if (filechargerate>0 && parseInt(isCharge)==1 && parseInt(userChargeStyle)==5)
+  {
+      if(confirm("点播该节目需要扣除"+filechargerate+"元的费用，确认要点播观看吗？"))
+      {
+         if(isEnoughCharge(fileid,username)!=1)
+         {
+            alert("对不起，您的账户余额不足，请先充值。");
+            return;
+         }
+      }
+      else
+      {
+        return;
+      }
+  }
+
+   var playurl;
+   var src="vod_get_p2p_playinfo.asp?fileid="+fileid;
+	    var oBao = new ActiveXObject("Microsoft.XMLHTTP");
+            oBao.open("POST",src,false);
+            oBao.send();
+    var strResult = unescape(oBao.responseText);
+    //将字符串分开.
+    if (strResult!="" && strResult!="no" )
+    {
+       var arrResult = strResult.split("@@@");
+       var theserverip=arrResult[0];
+       var thepass=arrResult[1];
+       var theport=arrResult[2];
+       var lMyListenPort = 9200;
+       var fformat=strFileType.toLowerCase();
+       var headstr="http://";
+       if (fformat=='avi'   ){headstr="miva://";}
+       else {headstr="miva://";}
+    
+    
+       var nowDate = new Date();
+       if (fformat=='rm' || fformat=='rmvb')
+           playurl = "miva://open/wmp/"+headstr+"127.0.0.1:"+lMyListenPort+"/"+pname+"."+fformat+"?cmd=view&ppserverip="+theserverip+"&ppport="+theport+"&filename="+base64encode(utf16to8(fs))+"&pppass="+thepass+"&startpos=0&filetype=rm&fileid="+fileid+"&username="+base64encode(utf16to8(username))+"&session="+nowDate.getTime()+"&lrcpath="+base64encode(utf16to8(zimu));
+       else 
+           playurl = "miva://open/wmp/"+headstr+"127.0.0.1:"+lMyListenPort+"/"+pname+"."+fformat+"?cmd=view&ppserverip="+theserverip+"&ppport="+theport+"&filename="+base64encode(utf16to8(fs))+"&pppass="+thepass+"&startpos=0&filetype="+fformat+"&fileid="+fileid+"&username="+base64encode(utf16to8(username))+"&session="+nowDate.getTime()+"&lrcpath="+base64encode(utf16to8(zimu));
+       document.getElementById(linkobj).href=playurl;
+       document.getElementById(linkobj).click();
+       doCharge(fileid,username);
+    }
+    else
+    {
+        alert("P2P点播服务器未启用或未配置。");
+    }
+ }
+}
+
+
+function bookmark()
+{
+   var title=document.title;
+   var url=document.location.href;
+   if (window.sidebar) window.sidebar.addPanel(title, url,"");
+   else if( window.opera && window.print ){
+           var mbm = document.createElement('a');
+           mbm.setAttribute('rel','sidebar');
+           mbm.setAttribute('href',url);
+           mbm.setAttribute('title',title);
+           mbm.click();
+           }
+   else if( document.all ) window.external.AddFavorite( url, title);
+}
+
+
+
+//*******************************************************
+
+function dbtj_online(str)
+{
+var dbtj=new ActiveXObject("Microsoft.XMLHTTP");
+var dbtjPage="dbtj_online.asp?onlineAct="+str;
+dbtj.open("POST",dbtjPage,false);
+dbtj.send();
+}
+
+function dealOnline(str){
+var oGetTotal=new ActiveXObject("Microsoft.XMLHTTP");
+var GetNums="../onlineNum_db.asp?onlineAct="+str;
+oGetTotal.open("POST",GetNums,false);
+oGetTotal.send();
+//var GetNumTotal=unescape(oGetTotal.responseText);
+//alert(GetNumTotal);
+
+}
+
+//*****************************************************
+function varystyle(obj)
+{
+  var body_center_width=document.body.clientWidth-480-25;
+　　　//obj.style.width=body_center_width+"px";//IE支持，FF不支持
+  var oStyleSheet=document.styleSheets[1];
+  var oRule=oStyleSheet.rules[0];
+  oRule.style.width=body_center_width+"px";
+}
+
+
+//-->
+</script>
+<style type="text/css">
+<!--
+.body_center {
+	FLOAT: left;
+	width:458px; 
+}
+-->
+</style>
+
+</HEAD>
+
+<BODY onload="javascript:history_show(); dbtj_online('add');dealOnline('A');" onbeforeunload="javascript:dbtj_online('del');dealOnline('D');"  onkeydown="javascript:onkeyboard()" ><!--头部logo及菜单-->
+
+<DIV id=header>
+<H1 id=logo><IMG alt="" src="MeaBox/logo.gif"></H1>
+<DIV id=exp></DIV>
+<DIV id=navigation>
+<UL class=nav>
+  <LI><A href="../index.asp">首 页</A> </LI>
+  <LI><A href="Vod_group.asp">影片库</A> </LI>
+  <LI><A href="MydianboForm.asp">我的点播单</A> </LI>
+  <LI style="display:none"><A href="downloads/XSplay.rar">XSplay下载</A> </LI>
+  <LI><A href="../downloads/FAQ.doc">帮 助</A> </LI>
+  <LI><A  onclick="javascript:bookmark();" href="javascript:void(0);">
+	收藏本站</A> </LI>
+</UL></DIV></DIV><!--firefox浏览器提示-->
+<DIV id=firefoxtip style="DISPLAY: none">XStream暂不支持非IE核心浏览器访问，建议您使用IE访问XStream！ 
+</DIV><!--介绍与欢迎-->
+
+<div id="news_marquee"><marquee id="Infotv"  height="14"  onmouseover='this.stop()' onmouseout='this.start()' scrollamount="3" scrolldelay="120" width="900"  ><FONT color=#000099><!--StartFragment -->
+<DIV>本网站刊载的音视频电影资料仅用于教学、研究，不用于商业性及传播性用途。访问者需遵守著作权法及其他相关法律的规定，不得侵犯本网站及相关权利人的合法权利。如果存在上述的违法现象，请留言反馈电子邮箱地址<A href="mailto:DTV@mail.gdufs.edu.cn">DTV@mail.gdufs.edu.cn</A>&nbsp;<?xml:namespace prefix = mailto /><mailto:DTV@mail.gdufs.edu.cn>。联系电话：36207207。</FONT><FONT color=#000099></FONT></DIV></mailto:DTV@mail.gdufs.edu.cn></marquee></div>
+
+
+<DIV id=searchPanel><!--关键字搜索-->
+<DIV id=searchBox >
+<form method="POST" name="form_login" action="?" style="padding: 0" >
+ 
+   <div style="margin-top:0px;margin-bottom:5px;text-align:center;">
+			<span>欢迎你，<font color="#0000FF">20121003532</font>    
+			&nbsp;&nbsp;&nbsp;[ <a href="#" onclick="javascript:modifyPersonalInfo();">修改个人信息</a> ] [ <a href="vod_exit.asp">退出</a> ]</span>
+		</div>
+
+</form>
+<FORM id="form_search" name="form_search"  action="vod_search.asp" method=post>
+<INPUT class=searchInput id="vk" onblur="if (this.value=='') this.value='在此输入节目名称和关键词';" onfocus="if (this.value=='在此输入节目名称和关键词') this.value='';" value="在此输入节目名称和关键词" name="vk"> 
+<INPUT class=searchImg id="img_search" title="Search" type="image" src="MeaBox/search.gif" value="Search" onclick="return doSearchSubmit();">
+</FORM>
+
+<DIV id=hotSearch>&nbsp; 热门搜索：
+<a href=Vod_Search.asp?vk=> <span class=blueBig></span> </a><a href=Vod_Search.asp?vk=%E6%95%99%E6%8E%88%E8%AE%BA%E5%9D%9B> <span class=blueBig>教授论坛</span> </a><a href=Vod_Search.asp?vk=Leading+Women> <span class=blueBig>Leading Women</span> </a><a href=Vod_Search.asp?vk=Talking+Business> <span class=blueBig>Talking Business</span> </a><a href=Vod_Search.asp?vk=> <span class=blueBig></span> </a>
+</DIV>
+</DIV><!--分类索引，横排-->
+<DIV id=reference>
+<H3><span style="float:left">影片索引</span><span style="float:right;padding-right:20px;font-size:12px">点播在线：4人</span></H3>
+<div style='clear: both'><div style="float: left; width: 79px; height:19px"><a href=vod_group.asp?Groupid=3><B>校园动态：</B> </a></div><div style=float: left><a href=vod_group.asp?Groupid=3&FirstTypeID=3391   style=color:#ff0000 >[师生推荐]</a> <a href=vod_group.asp?Groupid=3&FirstTypeID=2874   style=color:#ff0000 >[广外名师公开课]</a> <a href=vod_group.asp?Groupid=3&FirstTypeID=2142   style=color:#ff0000 >[名校名师公开课]</a> <a href=vod_group.asp?Groupid=3&FirstTypeID=818   style=color:#ff0000 >[教授论坛]</a> <a href=vod_group.asp?Groupid=3&FirstTypeID=1228   style=color:#ff0000 >[媒体广外]</a> <a href=vod_group.asp?Groupid=3&FirstTypeID=3546   style=color:#ff0000 >[校园文化]</a> <a href=vod_group.asp?Groupid=3&FirstTypeID=4616   style=color:#ff0000 >[微课]</a> <a href=vod_group.asp?Groupid=3&FirstTypeID=3109   style=color:#ff0000 >[备考园地]</a> <a href=vod_group.asp?Groupid=3&FirstTypeID=2850   style=color:#ff0000 >[原创Dv]</a> <a href=vod_group.asp?Groupid=3&FirstTypeID=1788   style=color:#ff0000 >[学术活动]</a> <a href=vod_group.asp?Groupid=3&FirstTypeID=824   style=color:#ff0000 >[讲座与培训]</a> <a href=vod_group.asp?Groupid=3&FirstTypeID=6549   style=color:#ff0000 >[国际法律语言学大会]</a> <a href=vod_group.asp?Groupid=3&FirstTypeID=6552   style=color:#ff0000 >[人文经典阅读]</a> </div></div><div style='clear: both'><div style="float: left; width: 79px; height:19px"><a href=vod_group.asp?Groupid=2><B>电视剪辑：</B> </a></div><div style=float: left><a href=vod_group.asp?Groupid=2&FirstTypeID=3133   style=color:#ff0000 >[CNN]</a> <a href=vod_group.asp?Groupid=2&FirstTypeID=30   style=color:#ff0000 >[BBC]</a> <a href=vod_group.asp?Groupid=2&FirstTypeID=5401   style=color:#ff0000 >[外语实践园地]</a> <a href=vod_group.asp?Groupid=2&FirstTypeID=20   style=color:#ff0000 >[CCTV-NEWS]</a> <a href=vod_group.asp?Groupid=2&FirstTypeID=2132   style=color:#ff0000 >[NewsAsia]</a> <a href=vod_group.asp?Groupid=2&FirstTypeID=44   style=color:#ff0000 >[明珠台]</a> <a href=vod_group.asp?Groupid=2&FirstTypeID=104   style=color:#ff0000 >[国家地理]</a> <a href=vod_group.asp?Groupid=2&FirstTypeID=28   style=color:#ff0000 >[探索频道]</a> <a href=vod_group.asp?Groupid=2&FirstTypeID=58   style=color:#ff0000 >[法语]</a> <a href=vod_group.asp?Groupid=2&FirstTypeID=59   style=color:#ff0000 >[德语]</a> <a href=vod_group.asp?Groupid=2&FirstTypeID=1212   style=color:#ff0000 >[俄1TV]</a> <a href=vod_group.asp?Groupid=2&FirstTypeID=51   style=color:#ff0000 >[俄语]</a> <a href=vod_group.asp?Groupid=2&FirstTypeID=60   style=color:#ff0000 >[西班牙语]</a> <a href=vod_group.asp?Groupid=2&FirstTypeID=50   style=color:#ff0000 >[意大利语]</a> <a href=vod_group.asp?Groupid=2&FirstTypeID=229   style=color:#ff0000 >[葡萄牙语]</a> <a href=vod_group.asp?Groupid=2&FirstTypeID=56   style=color:#ff0000 >[日语]</a> <a href=vod_group.asp?Groupid=2&FirstTypeID=5355   style=color:#ff0000 >[日语大放送]</a> <a href=vod_group.asp?Groupid=2&FirstTypeID=759   style=color:#ff0000 >[日语BS]</a> <a href=vod_group.asp?Groupid=2&FirstTypeID=55   style=color:#ff0000 >[���尼语]</a> <a href=vod_group.asp?Groupid=2&FirstTypeID=54   style=color:#ff0000 >[泰语]</a> <a href=vod_group.asp?Groupid=2&FirstTypeID=53   style=color:#ff0000 >[越南语]</a> <a href=vod_group.asp?Groupid=2&FirstTypeID=52   style=color:#ff0000 >[韩阿里郎]</a> <a href=vod_group.asp?Groupid=2&FirstTypeID=29   style=color:#ff0000 >[阿拉伯语]</a> <a href=vod_group.asp?Groupid=2&FirstTypeID=6504   style=color:#ff0000 >[缅甸语]</a> <a href=vod_group.asp?Groupid=2&FirstTypeID=6506   style=color:#ff0000 >[柬埔寨语]</a> <a href=vod_group.asp?Groupid=2&FirstTypeID=897   style=color:#ff0000 >[社会热点]</a> </div></div><div style='clear: both'><div style="float: left; width: 79px; height:19px"><a href=vod_group.asp?Groupid=1><B>电影精选：</B> </a></div><div style=float: left><a href=vod_group.asp?Groupid=1&FirstTypeID=879   style=color:#ff0000 >[欧美]</a> <a href=vod_group.asp?Groupid=1&FirstTypeID=881   style=color:#ff0000 >[亚洲]</a> <a href=vod_group.asp?Groupid=1&FirstTypeID=899   style=color:#ff0000 >[经典教学片]</a> <a href=vod_group.asp?Groupid=1&FirstTypeID=883   style=color:#ff0000 >[历届奥斯卡影片]</a> </div></div><div style='clear: both'><div style="float: left; width: 79px; height:19px"><a href=vod_group.asp?Groupid=4><B>时政教育：</B> </a></div><div style=float: left><a href=vod_group.asp?Groupid=4&FirstTypeID=3207   style=color:#ff0000 >[党员学习]</a> <a href=vod_group.asp?Groupid=4&FirstTypeID=3406   style=color:#ff0000 >[时事解读]</a> <a href=vod_group.asp?Groupid=4&FirstTypeID=834   style=color:#ff0000 >[两会专题]</a> <a href=vod_group.asp?Groupid=4&FirstTypeID=3416   style=color:#ff0000 >[庆典活动]</a> <a href=vod_group.asp?Groupid=4&FirstTypeID=836   style=color:#ff0000 >[安全教育]</a> </div></div><div style='clear: both'><div style="float: left; width: 79px; height:19px"><a href=vod_group.asp?Groupid=5><B>教学课件：</B> </a></div><div style=float: left><a href=vod_group.asp?Groupid=5&FirstTypeID=1100   style=color:#ff0000 >[教学课件]</a> <a href=vod_group.asp?Groupid=5&FirstTypeID=4188   style=color:#ff0000 >[校园英语听力]</a> </div></div>
+</DIV></DIV>
+<DIV id=container>
+<DIV id=body-left>
+
+<DIV class=post>
+<a target=_self href="javascript:goUrl()"> 
+<span class="f14b">
+<script type="text/javascript">
+<!--
+function getTJ()
+{
+    var oX=new ActiveXObject("Microsoft.XMLHTTP");
+    var page="vod_getTJ.asp";
+    oX.open("POST",page,false);
+    oX.send();
+    var strResult=unescape(oX.responseText);
+   //alert(strResult);
+    var arrResult = strResult.split("@@@");
+    return arrResult;
+}
+
+var pics;
+var links;
+var texts;
+var ArrTJ_img;
+    ArrTJ_img=getTJ();
+    if (ArrTJ_img.length==3)
+    {  
+     pics=ArrTJ_img[2];
+     links=ArrTJ_img[0];
+     texts=ArrTJ_img[1];
+    }
+    else
+    {
+     pics="";
+     links="";
+     texts="";
+    }
+
+var isautosize=0;
+var focus_width=240;
+var focus_height=180;
+var text_height=21;
+if (isautosize==1)focus_width=230;
+
+var swf_height = focus_height+text_height;
+
+document.write('<object classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000" codebase=http://fpdownload.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6&#8218;0&#8218;0&#8218;0 width="'+ focus_width +'" height="'+ swf_height +'">');
+document.write('<param name="allowScriptAccess" value="sameDomain"><param name="movie" value="http://www.webjx.com/js/focus.swf"><param name="quality" value="high"> <param name="bgcolor" value="#F0F0F0">');
+document.write('<param name="menu" value="false"><param name=wmode value="opaque">');
+document.write('<param name="FlashVars" value="pics='+pics+'&links='+links+'&texts='+texts+'&borderwidth='+focus_width+'&borderheight=' +focus_height+'&textheight='+text_height+'">');
+document.write('<embed src="pixviewer.swf" wmode="opaque" FlashVars="pics='+pics+'&links='+links+'&texts='+texts+'&borderwidth='+focus_width+'&borderheight= '+focus_height+'&textheight='+text_height+'" menu="false" bgcolor="#F0F0F0" quality="high" width ="'+ focus_width +'" height="'+ focus_height +'" allowScriptAccess="sameDomain" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer" />'); document.write('</object>');
+//-->
+</script>
+</span></a></DIV>
+
+
+<DIV class=lineBox>
+<H4>最近更新</H4>
+
+<DIV class=whiteBox-S><span  style="height:30px;float:right;line-height:30px;FONT-WEIGHT: bold; FONT-SIZE: 12px; MARGIN-BOTTOM: 5px; COLOR: #027bd9;letter-spacing:1px;padding-right:5px;" ><A href="vod_group.asp?groupid=3">...查看更多</A></span>
+<H4>校园动态
+</H4>
+<UL class=whiteBoxList>
+<li ><div style='float:left;width:145px; overflow: hidden;white-space:nowrap; text-overflow:ellipsis;'><a href='javascript:void(0)' title=周方银作客广东卫视“直播全球”栏目_20151020   onclick=javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=2016096');>周方银作客广东卫视“直播全球”栏目_20151020</a></div><div style='float:right;padding-right:5px;color:#999999;font-size:10px'>[2015-10-21]</div></li><li ><div style='float:left;width:145px; overflow: hidden;white-space:nowrap; text-overflow:ellipsis;'><a href='javascript:void(0)' title=《捉妖记》导演李诚毅   onclick=javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=2015734');>《捉妖记》导演李诚毅</a></div><div style='float:right;padding-right:5px;color:#999999;font-size:10px'>[2015-10-20]</div></li><li ><div style='float:left;width:145px; overflow: hidden;white-space:nowrap; text-overflow:ellipsis;'><a href='javascript:void(0)' title=周方银作客广东卫视“直播全球”-20151019   onclick=javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=2015725');>周方银作客广东卫视“直播全球”-20151019</a></div><div style='float:right;padding-right:5px;color:#999999;font-size:10px'>[2015-10-20]</div></li><li ><div style='float:left;width:145px; overflow: hidden;white-space:nowrap; text-overflow:ellipsis;'><a href='javascript:void(0)' title=挑战不可能（24-26）2015-10-18   onclick=javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=2015587');>挑战不可能（24-26）2015-10-18</a></div><div style='float:right;padding-right:5px;color:#999999;font-size:10px'>[2015-10-19]</div></li><li ><div style='float:left;width:145px; overflow: hidden;white-space:nowrap; text-overflow:ellipsis;'><a href='javascript:void(0)' title=袋貂-何处是我家（下）动物世界_20151019000002   onclick=javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=2015579');>袋貂-何处是我家（下）动物世界_20151019000002</a></div><div style='float:right;padding-right:5px;color:#999999;font-size:10px'>[2015-10-19]</div></li><li ><div style='float:left;width:145px; overflow: hidden;white-space:nowrap; text-overflow:ellipsis;'><a href='javascript:void(0)' title=2015广交会：我校���师谈进出口贸易   onclick=javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=2015184');>2015广交会：我校教师谈进出口贸易</a></div><div style='float:right;padding-right:5px;color:#999999;font-size:10px'>[2015-10-18]</div></li><li ><div style='float:left;width:145px; overflow: hidden;white-space:nowrap; text-overflow:ellipsis;'><a href='javascript:void(0)' title=比尔·盖茨夫妇《我们需要乐观主义》2014年斯坦福大学毕业演讲   onclick=javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=1975694');>比尔·盖茨夫妇《我们需要乐观主义》2014年斯坦福大学毕业演讲</a></div><div style='float:right;padding-right:5px;color:#999999;font-size:10px'>[2015-10-15]</div></li><li ><div style='float:left;width:145px; overflow: hidden;white-space:nowrap; text-overflow:ellipsis;'><a href='javascript:void(0)' title=开讲啦-李彦宏20151011   onclick=javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=1974735');>开讲啦-李彦宏20151011</a></div><div style='float:right;padding-right:5px;color:#999999;font-size:10px'>[2015-10-11]</div></li><li ><div style='float:left;width:145px; overflow: hidden;white-space:nowrap; text-overflow:ellipsis;'><a href='javascript:void(0)' title=美国总统每周演讲-纪念移民传统月   onclick=javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=1974382');>美国总统每周演讲-纪念移民传统月</a></div><div style='float:right;padding-right:5px;color:#999999;font-size:10px'>[2015-10-10]</div></li><li ><div style='float:left;width:145px; overflow: hidden;white-space:nowrap; text-overflow:ellipsis;'><a href='javascript:void(0)' title=60分钟时事杂志：访问魏德理教授关于抗老基因研究   onclick=javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=1974381');>60分钟时事杂志：访问魏德理教授关于抗老基因研究</a></div><div style='float:right;padding-right:5px;color:#999999;font-size:10px'>[2015-10-10]</div></li>
+</UL></DIV>
+
+<DIV class=whiteBox-S><span  style="height:30px;float:right;line-height:30px;FONT-WEIGHT: bold; FONT-SIZE: 12px; MARGIN-BOTTOM: 5px; COLOR: #027bd9;letter-spacing:1px;padding-right:5px;" ><A href="vod_group.asp?groupid=2">...查看更多</A></span>
+<H4>电视剪辑
+</H4>
+<UL class=whiteBoxList>
+<li ><div style='float:left;width:145px; overflow: hidden;white-space:nowrap; text-overflow:ellipsis;'><a href='javascript:void(0)' title=20151002Новости   onclick=javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=2016943');>20151002Новости</a></div><div style='float:right;padding-right:5px;color:#999999;font-size:10px'>[2015-10-23]</div></li><li ><div style='float:left;width:145px; overflow: hidden;white-space:nowrap; text-overflow:ellipsis;'><a href='javascript:void(0)' title=20151002Жди меня   onclick=javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=2016941');>20151002Жди меня</a></div><div style='float:right;padding-right:5px;color:#999999;font-size:10px'>[2015-10-23]</div></li><li ><div style='float:left;width:145px; overflow: hidden;white-space:nowrap; text-overflow:ellipsis;'><a href='javascript:void(0)' title=20151002Вечерний Ургант   onclick=javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=2016939');>20151002Вечерний Ургант</a></div><div style='float:right;padding-right:5px;color:#999999;font-size:10px'>[2015-10-23]</div></li><li ><div style='float:left;width:145px; overflow: hidden;white-space:nowrap; text-overflow:ellipsis;'><a href='javascript:void(0)' title=20150915ភាពយន្តនាទី   onclick=javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=2016938');>20150915ភាពយន្តនាទី</a></div><div style='float:right;padding-right:5px;color:#999999;font-size:10px'>[2015-10-23]</div></li><li ><div style='float:left;width:145px; overflow: hidden;white-space:nowrap; text-overflow:ellipsis;'><a href='javascript:void(0)' title=20151002Татьянина ночь   onclick=javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=2016937');>20151002Татьянина ночь</a></div><div style='float:right;padding-right:5px;color:#999999;font-size:10px'>[2015-10-23]</div></li><li ><div style='float:left;width:145px; overflow: hidden;white-space:nowrap; text-overflow:ellipsis;'><a href='javascript:void(0)' title=20150915នាទីកុមារ   onclick=javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=2016936');>20150915នាទីកុមារ</a></div><div style='float:right;padding-right:5px;color:#999999;font-size:10px'>[2015-10-23]</div></li><li ><div style='float:left;width:145px; overflow: hidden;white-space:nowrap; text-overflow:ellipsis;'><a href='javascript:void(0)' title=20150914ភាពយន្តនាទី   onclick=javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=2016935');>20150914ភាពយន្តនាទី</a></div><div style='float:right;padding-right:5px;color:#999999;font-size:10px'>[2015-10-23]</div></li><li ><div style='float:left;width:145px; overflow: hidden;white-space:nowrap; text-overflow:ellipsis;'><a href='javascript:void(0)' title=20151002Время   onclick=javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=2016934');>20151002Время</a></div><div style='float:right;padding-right:5px;color:#999999;font-size:10px'>[2015-10-23]</div></li><li ><div style='float:left;width:145px; overflow: hidden;white-space:nowrap; text-overflow:ellipsis;'><a href='javascript:void(0)' title=20150914ចំរៀង   onclick=javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=2016933');>20150914ចំរៀង</a></div><div style='float:right;padding-right:5px;color:#999999;font-size:10px'>[2015-10-23]</div></li><li ><div style='float:left;width:145px; overflow: hidden;white-space:nowrap; text-overflow:ellipsis;'><a href='javascript:void(0)' title=20151001Наедине со всеми   onclick=javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=2016931');>20151001Наедине со всеми</a></div><div style='float:right;padding-right:5px;color:#999999;font-size:10px'>[2015-10-23]</div></li>
+</UL></DIV>
+
+<DIV class=whiteBox-S><span  style="height:30px;float:right;line-height:30px;FONT-WEIGHT: bold; FONT-SIZE: 12px; MARGIN-BOTTOM: 5px; COLOR: #027bd9;letter-spacing:1px;padding-right:5px;" ><A href="vod_group.asp?groupid=1">...查看更多</A></span>
+<H4>电影精选
+</H4>
+<UL class=whiteBoxList>
+<li ><div style='float:left;width:145px; overflow: hidden;white-space:nowrap; text-overflow:ellipsis;'><a href='javascript:void(0)' title=霍比特人3五军之战（2）   onclick=javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=2015207');>霍比特人3五军之战（2）</a></div><div style='float:right;padding-right:5px;color:#999999;font-size:10px'>[2015-10-18]</div></li><li ><div style='float:left;width:145px; overflow: hidden;white-space:nowrap; text-overflow:ellipsis;'><a href='javascript:void(0)' title=霍比特人3五军之战（1）   onclick=javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=2015206');>霍比特人3五军之战（1）</a></div><div style='float:right;padding-right:5px;color:#999999;font-size:10px'>[2015-10-18]</div></li><li ><div style='float:left;width:145px; overflow: hidden;white-space:nowrap; text-overflow:ellipsis;'><a href='javascript:void(0)' title=霍比特人2史矛革之战加长版(2)   onclick=javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=2015139');>霍比特人2史矛革之战加长版(2)</a></div><div style='float:right;padding-right:5px;color:#999999;font-size:10px'>[2015-10-18]</div></li><li ><div style='float:left;width:145px; overflow: hidden;white-space:nowrap; text-overflow:ellipsis;'><a href='javascript:void(0)' title=霍比特人2史矛革之战加长版(1)   onclick=javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=2015128');>霍比特人2史矛革之战加长版(1)</a></div><div style='float:right;padding-right:5px;color:#999999;font-size:10px'>[2015-10-18]</div></li><li ><div style='float:left;width:145px; overflow: hidden;white-space:nowrap; text-overflow:ellipsis;'><a href='javascript:void(0)' title=军人没有假期   onclick=javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=1974627');>军人没有假期</a></div><div style='float:right;padding-right:5px;color:#999999;font-size:10px'>[2015-10-11]</div></li><li ><div style='float:left;width:145px; overflow: hidden;white-space:nowrap; text-overflow:ellipsis;'><a href='javascript:void(0)' title=第九区   onclick=javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=1974526');>第九区</a></div><div style='float:right;padding-right:5px;color:#999999;font-size:10px'>[2015-10-11]</div></li><li ><div style='float:left;width:145px; overflow: hidden;white-space:nowrap; text-overflow:ellipsis;'><a href='javascript:void(0)' title=屠魔战士   onclick=javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=1974465');>屠魔战士</a></div><div style='float:right;padding-right:5px;color:#999999;font-size:10px'>[2015-10-10]</div></li><li ><div style='float:left;width:145px; overflow: hidden;white-space:nowrap; text-overflow:ellipsis;'><a href='javascript:void(0)' title=侧耳倾听   onclick=javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=1974427');>侧耳倾听</a></div><div style='float:right;padding-right:5px;color:#999999;font-size:10px'>[2015-10-10]</div></li><li ><div style='float:left;width:145px; overflow: hidden;white-space:nowrap; text-overflow:ellipsis;'><a href='javascript:void(0)' title=富兰克林   onclick=javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=1974391');>富兰克林</a></div><div style='float:right;padding-right:5px;color:#999999;font-size:10px'>[2015-10-10]</div></li><li ><div style='float:left;width:145px; overflow: hidden;white-space:nowrap; text-overflow:ellipsis;'><a href='javascript:void(0)' title=墙壁之间   onclick=javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=1973739');>墙壁之间</a></div><div style='float:right;padding-right:5px;color:#999999;font-size:10px'>[2015-10-8]</div></li>
+</UL></DIV>
+
+<DIV class=whiteBox-S><span  style="height:30px;float:right;line-height:30px;FONT-WEIGHT: bold; FONT-SIZE: 12px; MARGIN-BOTTOM: 5px; COLOR: #027bd9;letter-spacing:1px;padding-right:5px;" ><A href="vod_group.asp?groupid=4">...查看更多</A></span>
+<H4>时政教育
+</H4>
+<UL class=whiteBoxList>
+<li ><div style='float:left;width:145px; overflow: hidden;white-space:nowrap; text-overflow:ellipsis;'><a href='javascript:void(0)' title=烈士纪念日向人民英雄纪念碑敬献花篮仪式   onclick=javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=1971681');>烈士纪念日向人民英雄纪念碑敬献花篮仪式</a></div><div style='float:right;padding-right:5px;color:#999999;font-size:10px'>[2015-9-30]</div></li><li ><div style='float:left;width:145px; overflow: hidden;white-space:nowrap; text-overflow:ellipsis;'><a href='javascript:void(0)' title=XI JINPING AT THE UN-20150928   onclick=javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=1971618');>XI JINPING AT THE UN-20150928</a></div><div style='float:right;padding-right:5px;color:#999999;font-size:10px'>[2015-9-30]</div></li><li ><div style='float:left;width:145px; overflow: hidden;white-space:nowrap; text-overflow:ellipsis;'><a href='javascript:void(0)' title=习主席美国之旅特别报道-20150925   onclick=javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=1970665');>习主席美国之旅特别报道-20150925</a></div><div style='float:right;padding-right:5px;color:#999999;font-size:10px'>[2015-9-27]</div></li><li ><div style='float:left;width:145px; overflow: hidden;white-space:nowrap; text-overflow:ellipsis;'><a href='javascript:void(0)' title=Xi Jin Ping US Visit-20150925   onclick=javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=1970664');>Xi Jin Ping US Visit-20150925</a></div><div style='float:right;padding-right:5px;color:#999999;font-size:10px'>[2015-9-27]</div></li><li ><div style='float:left;width:145px; overflow: hidden;white-space:nowrap; text-overflow:ellipsis;'><a href='javascript:void(0)' title=麦加踩踏事故20150925   onclick=javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=1946623');>麦加踩踏事故20150925</a></div><div style='float:right;padding-right:5px;color:#999999;font-size:10px'>[2015-9-26]</div></li><li ><div style='float:left;width:145px; overflow: hidden;white-space:nowrap; text-overflow:ellipsis;'><a href='javascript:void(0)' title=凤凰焦点关注：中日越的关系_20150915   onclick=javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=1938097');>凤凰焦点关注：中日越的关系_20150915</a></div><div style='float:right;padding-right:5px;color:#999999;font-size:10px'>[2015-9-16]</div></li><li ><div style='float:left;width:145px; overflow: hidden;white-space:nowrap; text-overflow:ellipsis;'><a href='javascript:void(0)' title=(CCTV-NEWS)庆祝抗战胜利70周年文艺晚会   onclick=javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=1935069');>(CCTV-NEWS)庆祝抗战胜利70周年文艺晚会</a></div><div style='float:right;padding-right:5px;color:#999999;font-size:10px'>[2015-9-6]</div></li><li ><div style='float:left;width:145px; overflow: hidden;white-space:nowrap; text-overflow:ellipsis;'><a href='javascript:void(0)' title=抗战胜利70周年文艺晚会   onclick=javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=1934448');>抗战胜利70周年文艺晚会</a></div><div style='float:right;padding-right:5px;color:#999999;font-size:10px'>[2015-9-4]</div></li><li ><div style='float:left;width:145px; overflow: hidden;white-space:nowrap; text-overflow:ellipsis;'><a href='javascript:void(0)' title=(CCTV-4)纪念中国人民抗日战争暨世界反法西斯战争胜利70周年大会及解读   onclick=javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=1934320');>(CCTV-4)纪念中国人民抗日战争暨世界反法西斯战争胜利70周年大会及解读</a></div><div style='float:right;padding-right:5px;color:#999999;font-size:10px'>[2015-9-3]</div></li><li ><div style='float:left;width:145px; overflow: hidden;white-space:nowrap; text-overflow:ellipsis;'><a href='javascript:void(0)' title=(CCTV-NEWS)纪念中国人民抗日战争暨世界反法西斯战争胜利70周年大会及解读   onclick=javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=1934316');>(CCTV-NEWS)纪念中国人民抗日战争暨世界反法西斯战争胜利70周年大会及解读</a></div><div style='float:right;padding-right:5px;color:#999999;font-size:10px'>[2015-9-3]</div></li>
+</UL></DIV>
+
+<DIV class=whiteBox-S><span  style="height:30px;float:right;line-height:30px;FONT-WEIGHT: bold; FONT-SIZE: 12px; MARGIN-BOTTOM: 5px; COLOR: #027bd9;letter-spacing:1px;padding-right:5px;" ><A href="vod_group.asp?groupid=5">...查看更多</A></span>
+<H4>教学课件
+</H4>
+<UL class=whiteBoxList>
+<li ><div style='float:left;width:145px; overflow: hidden;white-space:nowrap; text-overflow:ellipsis;'><a href='javascript:void(0)' title=Unit10 Homeless To Harvard   onclick=javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=931058');>Unit10 Homeless To Harvard</a></div><div style='float:right;padding-right:5px;color:#999999;font-size:10px'>[2014-4-2]</div></li><li ><div style='float:left;width:145px; overflow: hidden;white-space:nowrap; text-overflow:ellipsis;'><a href='javascript:void(0)' title=Unit7 The King’s Speech   onclick=javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=778029');>Unit7 The King’s Speech</a></div><div style='float:right;padding-right:5px;color:#999999;font-size:10px'>[2014-3-4]</div></li><li ><div style='float:left;width:145px; overflow: hidden;white-space:nowrap; text-overflow:ellipsis;'><a href='javascript:void(0)' title=Unit 1  Kongfu Panda.wmv   onclick=javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=773441');>Unit 1  Kongfu Panda.wmv</a></div><div style='float:right;padding-right:5px;color:#999999;font-size:10px'>[2014-2-28]</div></li><li ><div style='float:left;width:145px; overflow: hidden;white-space:nowrap; text-overflow:ellipsis;'><a href='javascript:void(0)' title=Unit 8 Forrest Gump   onclick=javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=437764');>Unit 8 Forrest Gump</a></div><div style='float:right;padding-right:5px;color:#999999;font-size:10px'>[2013-11-12]</div></li><li ><div style='float:left;width:145px; overflow: hidden;white-space:nowrap; text-overflow:ellipsis;'><a href='javascript:void(0)' title=Unite 3 The Joy Luck Club   onclick=javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=436251');>Unite 3 The Joy Luck Club</a></div><div style='float:right;padding-right:5px;color:#999999;font-size:10px'>[2013-11-6]</div></li><li ><div style='float:left;width:145px; overflow: hidden;white-space:nowrap; text-overflow:ellipsis;'><a href='javascript:void(0)' title=Unit 6 Social Network   onclick=javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=436113');>Unit 6 Social Network</a></div><div style='float:right;padding-right:5px;color:#999999;font-size:10px'>[2013-11-5]</div></li><li ><div style='float:left;width:145px; overflow: hidden;white-space:nowrap; text-overflow:ellipsis;'><a href='javascript:void(0)' title=unit 2the truman show.rmvb   onclick=javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=435606');>unit 2the truman show.rmvb</a></div><div style='float:right;padding-right:5px;color:#999999;font-size:10px'>[2013-11-4]</div></li><li ><div style='float:left;width:145px; overflow: hidden;white-space:nowrap; text-overflow:ellipsis;'><a href='javascript:void(0)' title=Unit 9 Hook   onclick=javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=435053');>Unit 9 Hook</a></div><div style='float:right;padding-right:5px;color:#999999;font-size:10px'>[2013-11-1]</div></li><li ><div style='float:left;width:145px; overflow: hidden;white-space:nowrap; text-overflow:ellipsis;'><a href='javascript:void(0)' title=Unit 5 ironm   onclick=javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=435049');>Unit 5 ironm</a></div><div style='float:right;padding-right:5px;color:#999999;font-size:10px'>[2013-11-1]</div></li><li ><div style='float:left;width:145px; overflow: hidden;white-space:nowrap; text-overflow:ellipsis;'><a href='javascript:void(0)' title=Unit 4 Fireproof   onclick=javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=434371');>Unit 4 Fireproof</a></div><div style='float:right;padding-right:5px;color:#999999;font-size:10px'>[2013-10-30]</div></li>
+</UL></DIV>
+
+</DIV></DIV>
+
+<DIV id=body-center >
+
+<DIV class=centerBox><!--正在热映 -->
+<H4><span style="MARGIN-BOTTOM:0"><img src="MeaBox/IC.gif" width=20 height=18 border=0 > </span><sapn style="MARGIN-BOTTOM:2px">最新影片</sapn></H4>
+<UL class=hotting>
+  
+   <LI>
+
+  <DIV class=hotting-left><IMG alt=20151002Новости   src="http://202.116.194.117/F//俄1tv/新闻时政/2015年/09-10/20151002новости_20151023161645482.jpg" width="100" height="70" style="cursor:hand"  onclick="javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=2016943');" ></DIV>
+  <DIV class=hotting-right>
+  <DIV class=movieName>  <A href="javascript:void(0)" title=20151002Новости   onclick="javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=2016943');"  ><div style="width:310px; overflow: hidden;white-space:nowrap; text-overflow:ellipsis;"><span id="P2016943" >20151002Новости</span></div></A> </DIV>
+  <SPAN   class=gray></SPAN>   <a href="javascript:void(0)" title=20151002Новости  onclick="javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=2016943');" >[查看详情]</A> 
+  <UL class=hottingTool>
+    <LI><IMG  title="P2P播放 20151002Новости" alt="P2P播放 20151002Новости" src="MeaBox/play_p2p.gif" style="cursor:hand"   onclick="javascript:openWin('mediaplayer.asp?playid=2016943&LXJ=0','2016943','20121003532','');doRecordLog('2016943','20121003532')"></LI>
+    <LI><a href="javascript:void(0);" id="LinkOpen2016943" style="display:none">播放</a><IMG  alt="播放 20151002Новости" src="MeaBox/play.gif" style="cursor:hand;" onclick="javascript:OpenPlayer('2016943','20151002Новости','F:\\俄1TV\\新闻时政\\2015年\\09-10\\20151002Новости_20151023161645482.avi','','avi','20121003532','','0','LinkOpen2016943');doRecordLog('2016943','20121003532')"> </LI>
+    <LI>播放:<SPAN class=gray>0</SPAN> </LI>
+    <LI>下载:<SPAN class=gray>0</SPAN> </LI>
+    
+    <LI><span>格式：<SPAN class=gray>avi</SPAN> </LI>
+
+    <LI style="display:none"><A href="vod_Group.asp?FirstTypeID=1212">俄1TV</A></LI>
+    <LI style="padding-top:10px"><IMG width="16" height="12" title="添加到我的点播单" alt="添加到我的点播单" src="MeaBox/jr2.gif" style="cursor:hand;"  onmouseover="this.width=18;this.height=14"  onmouseout="this.width=16;this.height=12" onclick="javascript:AddMyDianboForm('2016943','20121003532');"></LI>
+  </UL></DIV></LI>
+  
+   <LI>
+
+  <DIV class=hotting-left><IMG alt=20151002Жди меня   src="http://202.116.194.117/F//俄1tv/综艺节目/2015年/09-10/20151002жди меня_20151023161328618.jpg" width="100" height="70" style="cursor:hand"  onclick="javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=2016941');" ></DIV>
+  <DIV class=hotting-right>
+  <DIV class=movieName>  <A href="javascript:void(0)" title=20151002Жди меня   onclick="javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=2016941');"  ><div style="width:310px; overflow: hidden;white-space:nowrap; text-overflow:ellipsis;"><span id="P2016941" >20151002Жди меня</span></div></A> </DIV>
+  <SPAN   class=gray></SPAN>   <a href="javascript:void(0)" title=20151002Жди меня  onclick="javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=2016941');" >[查看详情]</A> 
+  <UL class=hottingTool>
+    <LI><IMG  title="P2P播放 20151002Жди меня" alt="P2P播放 20151002Жди меня" src="MeaBox/play_p2p.gif" style="cursor:hand"   onclick="javascript:openWin('mediaplayer.asp?playid=2016941&LXJ=0','2016941','20121003532','');doRecordLog('2016941','20121003532')"></LI>
+    <LI><a href="javascript:void(0);" id="LinkOpen2016941" style="display:none">播放</a><IMG  alt="播放 20151002Жди меня" src="MeaBox/play.gif" style="cursor:hand;" onclick="javascript:OpenPlayer('2016941','20151002Ждименя','F:\\俄1TV\\综艺节目\\2015年\\09-10\\20151002Жди меня_20151023161328618.avi','','avi','20121003532','','0','LinkOpen2016941');doRecordLog('2016941','20121003532')"> </LI>
+    <LI>播放:<SPAN class=gray>0</SPAN> </LI>
+    <LI>下载:<SPAN class=gray>0</SPAN> </LI>
+    
+    <LI><span>格式：<SPAN class=gray>avi</SPAN> </LI>
+
+    <LI style="display:none"><A href="vod_Group.asp?FirstTypeID=1212">俄1TV</A></LI>
+    <LI style="padding-top:10px"><IMG width="16" height="12" title="添加到我的点播单" alt="添加到我的点播单" src="MeaBox/jr2.gif" style="cursor:hand;"  onmouseover="this.width=18;this.height=14"  onmouseout="this.width=16;this.height=12" onclick="javascript:AddMyDianboForm('2016941','20121003532');"></LI>
+  </UL></DIV></LI>
+  
+   <LI>
+
+  <DIV class=hotting-left><IMG alt=20151002Вечерний Ургант   src="http://202.116.194.117/F//俄1tv/综艺节目/2015年/09-10/20151002вечерний ургант_20151023160932852.jpg" width="100" height="70" style="cursor:hand"  onclick="javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=2016939');" ></DIV>
+  <DIV class=hotting-right>
+  <DIV class=movieName>  <A href="javascript:void(0)" title=20151002Вечерний Ургант   onclick="javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=2016939');"  ><div style="width:310px; overflow: hidden;white-space:nowrap; text-overflow:ellipsis;"><span id="P2016939" >20151002Вечерний Ургант</span></div></A> </DIV>
+  <SPAN   class=gray></SPAN>   <a href="javascript:void(0)" title=20151002Вечерний Ургант  onclick="javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=2016939');" >[查看详情]</A> 
+  <UL class=hottingTool>
+    <LI><IMG  title="P2P播放 20151002Вечерний Ургант" alt="P2P播放 20151002Вечерний Ургант" src="MeaBox/play_p2p.gif" style="cursor:hand"   onclick="javascript:openWin('mediaplayer.asp?playid=2016939&LXJ=0','2016939','20121003532','');doRecordLog('2016939','20121003532')"></LI>
+    <LI><a href="javascript:void(0);" id="LinkOpen2016939" style="display:none">播放</a><IMG  alt="播放 20151002Вечерний Ургант" src="MeaBox/play.gif" style="cursor:hand;" onclick="javascript:OpenPlayer('2016939','20151002ВечернийУргант','F:\\俄1TV\\综艺节目\\2015年\\09-10\\20151002Вечерний Ургант_20151023160932852.avi','','avi','20121003532','','0','LinkOpen2016939');doRecordLog('2016939','20121003532')"> </LI>
+    <LI>播放:<SPAN class=gray>0</SPAN> </LI>
+    <LI>下载:<SPAN class=gray>0</SPAN> </LI>
+    
+    <LI><span>格式：<SPAN class=gray>avi</SPAN> </LI>
+
+    <LI style="display:none"><A href="vod_Group.asp?FirstTypeID=1212">俄1TV</A></LI>
+    <LI style="padding-top:10px"><IMG width="16" height="12" title="添加到我的点播单" alt="添加到我的点播单" src="MeaBox/jr2.gif" style="cursor:hand;"  onmouseover="this.width=18;this.height=14"  onmouseout="this.width=16;this.height=12" onclick="javascript:AddMyDianboForm('2016939','20121003532');"></LI>
+  </UL></DIV></LI>
+  
+   <LI>
+
+  <DIV class=hotting-left><IMG alt=20150915ភាពយន្តនាទី   src="http://202.116.194.117/F//柬埔寨语/影视节目/20150915ភាពយន្តនាទី_20151023160838138.jpg" width="100" height="70" style="cursor:hand"  onclick="javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=2016938');" ></DIV>
+  <DIV class=hotting-right>
+  <DIV class=movieName>  <A href="javascript:void(0)" title=20150915ភាពយន្តនាទី   onclick="javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=2016938');"  ><div style="width:310px; overflow: hidden;white-space:nowrap; text-overflow:ellipsis;"><span id="P2016938" >20150915ភាពយន្តនាទី</span></div></A> </DIV>
+  <SPAN   class=gray>电视剧《创世纪》，由罗嘉良，古天乐，郭可盈，蔡少芬等主演。</SPAN>   <a href="javascript:void(0)" title=20150915ភាពយន្តនាទី  onclick="javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=2016938');" >[查看详情]</A> 
+  <UL class=hottingTool>
+    <LI><IMG  title="P2P播放 20150915ភាពយន្តនាទី" alt="P2P播放 20150915ភាពយន្តនាទី" src="MeaBox/play_p2p.gif" style="cursor:hand"   onclick="javascript:openWin('mediaplayer.asp?playid=2016938&LXJ=0','2016938','20121003532','');doRecordLog('2016938','20121003532')"></LI>
+    <LI><a href="javascript:void(0);" id="LinkOpen2016938" style="display:none">播放</a><IMG  alt="播放 20150915ភាពយន្តនាទី" src="MeaBox/play.gif" style="cursor:hand;" onclick="javascript:OpenPlayer('2016938','20150915ភាពយន្តនាទី','F:\\柬埔寨语\\影视节目\\20150915ភាពយន្តនាទី_20151023160838138.avi','','avi','20121003532','','0','LinkOpen2016938');doRecordLog('2016938','20121003532')"> </LI>
+    <LI>播放:<SPAN class=gray>0</SPAN> </LI>
+    <LI>下载:<SPAN class=gray>0</SPAN> </LI>
+    
+    <LI><span>格式：<SPAN class=gray>avi</SPAN> </LI>
+
+    <LI style="display:none"><A href="vod_Group.asp?FirstTypeID=6506">柬埔寨语</A></LI>
+    <LI style="padding-top:10px"><IMG width="16" height="12" title="添加到我的点播单" alt="添加到我的点播单" src="MeaBox/jr2.gif" style="cursor:hand;"  onmouseover="this.width=18;this.height=14"  onmouseout="this.width=16;this.height=12" onclick="javascript:AddMyDianboForm('2016938','20121003532');"></LI>
+  </UL></DIV></LI>
+  
+   <LI>
+
+  <DIV class=hotting-left><IMG alt=20151002Татьянина ночь   src="http://202.116.194.117/F//俄1tv/影视节目/2015年/09-10/20151002татьянина ночь_20151023160729779.jpg" width="100" height="70" style="cursor:hand"  onclick="javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=2016937');" ></DIV>
+  <DIV class=hotting-right>
+  <DIV class=movieName>  <A href="javascript:void(0)" title=20151002Татьянина ночь   onclick="javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=2016937');"  ><div style="width:310px; overflow: hidden;white-space:nowrap; text-overflow:ellipsis;"><span id="P2016937" >20151002Татьянина ночь</span></div></A> </DIV>
+  <SPAN   class=gray></SPAN>   <a href="javascript:void(0)" title=20151002Татьянина ночь  onclick="javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=2016937');" >[查看详情]</A> 
+  <UL class=hottingTool>
+    <LI><IMG  title="P2P播放 20151002Татьянина ночь" alt="P2P播放 20151002Татьянина ночь" src="MeaBox/play_p2p.gif" style="cursor:hand"   onclick="javascript:openWin('mediaplayer.asp?playid=2016937&LXJ=0','2016937','20121003532','');doRecordLog('2016937','20121003532')"></LI>
+    <LI><a href="javascript:void(0);" id="LinkOpen2016937" style="display:none">播放</a><IMG  alt="播放 20151002Татьянина ночь" src="MeaBox/play.gif" style="cursor:hand;" onclick="javascript:OpenPlayer('2016937','20151002Татьянинаночь','F:\\俄1TV\\影视节目\\2015年\\09-10\\20151002Татьянина ночь_20151023160729779.avi','','avi','20121003532','','0','LinkOpen2016937');doRecordLog('2016937','20121003532')"> </LI>
+    <LI>播放:<SPAN class=gray>0</SPAN> </LI>
+    <LI>下载:<SPAN class=gray>0</SPAN> </LI>
+    
+    <LI><span>格式：<SPAN class=gray>avi</SPAN> </LI>
+
+    <LI style="display:none"><A href="vod_Group.asp?FirstTypeID=1212">俄1TV</A></LI>
+    <LI style="padding-top:10px"><IMG width="16" height="12" title="添加到我的点播单" alt="添加到我的点播单" src="MeaBox/jr2.gif" style="cursor:hand;"  onmouseover="this.width=18;this.height=14"  onmouseout="this.width=16;this.height=12" onclick="javascript:AddMyDianboForm('2016937','20121003532');"></LI>
+  </UL></DIV></LI>
+  
+   <LI>
+
+  <DIV class=hotting-left><IMG alt=20150915នាទីកុមារ   src="http://202.116.194.117/F//柬埔寨语/影视节目/20150915នាទីកុមារ_20151023160625557.jpg" width="100" height="70" style="cursor:hand"  onclick="javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=2016936');" ></DIV>
+  <DIV class=hotting-right>
+  <DIV class=movieName>  <A href="javascript:void(0)" title=20150915នាទីកុមារ   onclick="javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=2016936');"  ><div style="width:310px; overflow: hidden;white-space:nowrap; text-overflow:ellipsis;"><span id="P2016936" >20150915នាទីកុមារ</span></div></A> </DIV>
+  <SPAN   class=gray>法国动画《拉昂》（RAHAN），改编自法国著名漫画家罗杰·雷克尤勒科斯（Roger Lecureux）的同名漫画名作</SPAN>   <a href="javascript:void(0)" title=20150915នាទីកុមារ  onclick="javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=2016936');" >[查看详情]</A> 
+  <UL class=hottingTool>
+    <LI><IMG  title="P2P播放 20150915នាទីកុមារ" alt="P2P播放 20150915នាទីកុមារ" src="MeaBox/play_p2p.gif" style="cursor:hand"   onclick="javascript:openWin('mediaplayer.asp?playid=2016936&LXJ=0','2016936','20121003532','');doRecordLog('2016936','20121003532')"></LI>
+    <LI><a href="javascript:void(0);" id="LinkOpen2016936" style="display:none">播放</a><IMG  alt="播放 20150915នាទីកុមារ" src="MeaBox/play.gif" style="cursor:hand;" onclick="javascript:OpenPlayer('2016936','20150915នាទីកុមារ','F:\\柬埔寨语\\影视节目\\20150915នាទីកុមារ_20151023160625557.avi','','avi','20121003532','','0','LinkOpen2016936');doRecordLog('2016936','20121003532')"> </LI>
+    <LI>播放:<SPAN class=gray>0</SPAN> </LI>
+    <LI>下载:<SPAN class=gray>0</SPAN> </LI>
+    
+    <LI><span>格式：<SPAN class=gray>avi</SPAN> </LI>
+
+    <LI style="display:none"><A href="vod_Group.asp?FirstTypeID=6506">柬埔寨语</A></LI>
+    <LI style="padding-top:10px"><IMG width="16" height="12" title="添加到我的点播单" alt="添加到我的点播单" src="MeaBox/jr2.gif" style="cursor:hand;"  onmouseover="this.width=18;this.height=14"  onmouseout="this.width=16;this.height=12" onclick="javascript:AddMyDianboForm('2016936','20121003532');"></LI>
+  </UL></DIV></LI>
+  
+   <LI>
+
+  <DIV class=hotting-left><IMG alt=20150914ភាពយន្តនាទី   src="http://202.116.194.117/F//柬埔寨语/影视节目/20150914ភាពយន្តនាទី_20151023160428287.jpg" width="100" height="70" style="cursor:hand"  onclick="javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=2016935');" ></DIV>
+  <DIV class=hotting-right>
+  <DIV class=movieName>  <A href="javascript:void(0)" title=20150914ភាពយន្តនាទី   onclick="javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=2016935');"  ><div style="width:310px; overflow: hidden;white-space:nowrap; text-overflow:ellipsis;"><span id="P2016935" >20150914ភាពយន្តនាទី</span></div></A> </DIV>
+  <SPAN   class=gray>电视剧《阖府统请》，由王喜、郭可盈、袁洁莹等主演。</SPAN>   <a href="javascript:void(0)" title=20150914ភាពយន្តនាទី  onclick="javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=2016935');" >[查看详情]</A> 
+  <UL class=hottingTool>
+    <LI><IMG  title="P2P播放 20150914ភាពយន្តនាទី" alt="P2P播放 20150914ភាពយន្តនាទី" src="MeaBox/play_p2p.gif" style="cursor:hand"   onclick="javascript:openWin('mediaplayer.asp?playid=2016935&LXJ=0','2016935','20121003532','');doRecordLog('2016935','20121003532')"></LI>
+    <LI><a href="javascript:void(0);" id="LinkOpen2016935" style="display:none">播放</a><IMG  alt="播放 20150914ភាពយន្តនាទី" src="MeaBox/play.gif" style="cursor:hand;" onclick="javascript:OpenPlayer('2016935','20150914ភាពយន្តនាទី','F:\\柬埔寨语\\影视节目\\20150914ភាពយន្តនាទី_20151023160428287.avi','','avi','20121003532','','0','LinkOpen2016935');doRecordLog('2016935','20121003532')"> </LI>
+    <LI>播放:<SPAN class=gray>0</SPAN> </LI>
+    <LI>下载:<SPAN class=gray>0</SPAN> </LI>
+    
+    <LI><span>格式：<SPAN class=gray>avi</SPAN> </LI>
+
+    <LI style="display:none"><A href="vod_Group.asp?FirstTypeID=6506">柬埔寨语</A></LI>
+    <LI style="padding-top:10px"><IMG width="16" height="12" title="添加到我的点播单" alt="添加到我的点播单" src="MeaBox/jr2.gif" style="cursor:hand;"  onmouseover="this.width=18;this.height=14"  onmouseout="this.width=16;this.height=12" onclick="javascript:AddMyDianboForm('2016935','20121003532');"></LI>
+  </UL></DIV></LI>
+  
+   <LI>
+
+  <DIV class=hotting-left><IMG alt=20151002Время   src="http://202.116.194.117/F//俄1tv/新闻时政/2015年/09-10/20151002время_20151023160110986.jpg" width="100" height="70" style="cursor:hand"  onclick="javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=2016934');" ></DIV>
+  <DIV class=hotting-right>
+  <DIV class=movieName>  <A href="javascript:void(0)" title=20151002Время   onclick="javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=2016934');"  ><div style="width:310px; overflow: hidden;white-space:nowrap; text-overflow:ellipsis;"><span id="P2016934" >20151002Время</span></div></A> </DIV>
+  <SPAN   class=gray></SPAN>   <a href="javascript:void(0)" title=20151002Время  onclick="javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=2016934');" >[查看详情]</A> 
+  <UL class=hottingTool>
+    <LI><IMG  title="P2P播放 20151002Время" alt="P2P播放 20151002Время" src="MeaBox/play_p2p.gif" style="cursor:hand"   onclick="javascript:openWin('mediaplayer.asp?playid=2016934&LXJ=0','2016934','20121003532','');doRecordLog('2016934','20121003532')"></LI>
+    <LI><a href="javascript:void(0);" id="LinkOpen2016934" style="display:none">播放</a><IMG  alt="播放 20151002Время" src="MeaBox/play.gif" style="cursor:hand;" onclick="javascript:OpenPlayer('2016934','20151002Время','F:\\俄1TV\\新闻时政\\2015年\\09-10\\20151002Время_20151023160110986.avi','','avi','20121003532','','0','LinkOpen2016934');doRecordLog('2016934','20121003532')"> </LI>
+    <LI>播放:<SPAN class=gray>0</SPAN> </LI>
+    <LI>下载:<SPAN class=gray>0</SPAN> </LI>
+    
+    <LI><span>格式：<SPAN class=gray>avi</SPAN> </LI>
+
+    <LI style="display:none"><A href="vod_Group.asp?FirstTypeID=1212">俄1TV</A></LI>
+    <LI style="padding-top:10px"><IMG width="16" height="12" title="添加到我的点播单" alt="添加到我的点播单" src="MeaBox/jr2.gif" style="cursor:hand;"  onmouseover="this.width=18;this.height=14"  onmouseout="this.width=16;this.height=12" onclick="javascript:AddMyDianboForm('2016934','20121003532');"></LI>
+  </UL></DIV></LI>
+  
+   <LI>
+
+  <DIV class=hotting-left><IMG alt=20150914ចំរៀង   src="http://202.116.194.117/F//柬埔寨语/综艺节目/20150914ចំរៀង_20151023160020012.jpg" width="100" height="70" style="cursor:hand"  onclick="javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=2016933');" ></DIV>
+  <DIV class=hotting-right>
+  <DIV class=movieName>  <A href="javascript:void(0)" title=20150914ចំរៀ���   onclick="javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=2016933');"  ><div style="width:310px; overflow: hidden;white-space:nowrap; text-overflow:ellipsis;"><span id="P2016933" >20150914ចំរៀង</span></div></A> </DIV>
+  <SPAN   class=gray>歌曲«សមានចិត្តមនុស្សធម៌នៅខែកំពង់ឆ្លាំង»</SPAN>   <a href="javascript:void(0)" title=20150914ចំរៀង  onclick="javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=2016933');" >[查看详情]</A> 
+  <UL class=hottingTool>
+    <LI><IMG  title="P2P播放 20150914ចំរៀង" alt="P2P播放 20150914ចំរៀង" src="MeaBox/play_p2p.gif" style="cursor:hand"   onclick="javascript:openWin('mediaplayer.asp?playid=2016933&LXJ=0','2016933','20121003532','');doRecordLog('2016933','20121003532')"></LI>
+    <LI><a href="javascript:void(0);" id="LinkOpen2016933" style="display:none">播放</a><IMG  alt="播放 20150914ចំរៀង" src="MeaBox/play.gif" style="cursor:hand;" onclick="javascript:OpenPlayer('2016933','20150914ចំរៀង','F:\\柬埔寨语\\综艺节目\\20150914ចំរៀង_20151023160020012.avi','','avi','20121003532','','0','LinkOpen2016933');doRecordLog('2016933','20121003532')"> </LI>
+    <LI>播放:<SPAN class=gray>0</SPAN> </LI>
+    <LI>下载:<SPAN class=gray>0</SPAN> </LI>
+    
+    <LI><span>格式：<SPAN class=gray>avi</SPAN> </LI>
+
+    <LI style="display:none"><A href="vod_Group.asp?FirstTypeID=6506">柬埔寨语</A></LI>
+    <LI style="padding-top:10px"><IMG width="16" height="12" title="添加到我的点播单" alt="添加到我的点播单" src="MeaBox/jr2.gif" style="cursor:hand;"  onmouseover="this.width=18;this.height=14"  onmouseout="this.width=16;this.height=12" onclick="javascript:AddMyDianboForm('2016933','20121003532');"></LI>
+  </UL></DIV></LI>
+  
+   <LI>
+
+  <DIV class=hotting-left><IMG alt=20151001Наедине со всеми   src="http://202.116.194.117/F//俄1tv/综艺节目/2015年/09-10/20151001наедине со всеми_20151023155902166.jpg" width="100" height="70" style="cursor:hand"  onclick="javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=2016931');" ></DIV>
+  <DIV class=hotting-right>
+  <DIV class=movieName>  <A href="javascript:void(0)" title=20151001Наедине со всеми   onclick="javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=2016931');"  ><div style="width:310px; overflow: hidden;white-space:nowrap; text-overflow:ellipsis;"><span id="P2016931" >20151001Наедине со всеми</span></div></A> </DIV>
+  <SPAN   class=gray></SPAN>   <a href="javascript:void(0)" title=20151001Наедине со всеми  onclick="javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=2016931');" >[查看详情]</A> 
+  <UL class=hottingTool>
+    <LI><IMG  title="P2P播放 20151001Наедине со всеми" alt="P2P播放 20151001Наедине со всеми" src="MeaBox/play_p2p.gif" style="cursor:hand"   onclick="javascript:openWin('mediaplayer.asp?playid=2016931&LXJ=0','2016931','20121003532','');doRecordLog('2016931','20121003532')"></LI>
+    <LI><a href="javascript:void(0);" id="LinkOpen2016931" style="display:none">播放</a><IMG  alt="播放 20151001Наедине со всеми" src="MeaBox/play.gif" style="cursor:hand;" onclick="javascript:OpenPlayer('2016931','20151001Наединесовсеми','F:\\俄1TV\\综艺节目\\2015年\\09-10\\20151001Наедине со всеми_20151023155902166.avi','','avi','20121003532','','0','LinkOpen2016931');doRecordLog('2016931','20121003532')"> </LI>
+    <LI>播放:<SPAN class=gray>0</SPAN> </LI>
+    <LI>下载:<SPAN class=gray>0</SPAN> </LI>
+    
+    <LI><span>格式：<SPAN class=gray>avi</SPAN> </LI>
+
+    <LI style="display:none"><A href="vod_Group.asp?FirstTypeID=1212">俄1TV</A></LI>
+    <LI style="padding-top:10px"><IMG width="16" height="12" title="添加到我的点播单" alt="添加到我的点播单" src="MeaBox/jr2.gif" style="cursor:hand;"  onmouseover="this.width=18;this.height=14"  onmouseout="this.width=16;this.height=12" onclick="javascript:AddMyDianboForm('2016931','20121003532');"></LI>
+  </UL></DIV></LI>
+  
+   <LI>
+
+  <DIV class=hotting-left><IMG alt=20151001Мужское  Женское   src="http://202.116.194.117/F//俄1tv/综艺节目/2015年/09-10/20151001мужское  женское_20151023155633086.jpg" width="100" height="70" style="cursor:hand"  onclick="javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=2016925');" ></DIV>
+  <DIV class=hotting-right>
+  <DIV class=movieName>  <A href="javascript:void(0)" title=20151001Мужское  Женское   onclick="javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=2016925');"  ><div style="width:310px; overflow: hidden;white-space:nowrap; text-overflow:ellipsis;"><span id="P2016925" >20151001Мужское  Женское</span></div></A> </DIV>
+  <SPAN   class=gray></SPAN>   <a href="javascript:void(0)" title=20151001Мужское  Женское  onclick="javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=2016925');" >[查看详情]</A> 
+  <UL class=hottingTool>
+    <LI><IMG  title="P2P播放 20151001Мужское  Женское" alt="P2P播放 20151001Мужское  Женское" src="MeaBox/play_p2p.gif" style="cursor:hand"   onclick="javascript:openWin('mediaplayer.asp?playid=2016925&LXJ=0','2016925','20121003532','');doRecordLog('2016925','20121003532')"></LI>
+    <LI><a href="javascript:void(0);" id="LinkOpen2016925" style="display:none">播放</a><IMG  alt="播放 20151001Мужское  Женское" src="MeaBox/play.gif" style="cursor:hand;" onclick="javascript:OpenPlayer('2016925','20151001МужскоеЖенское','F:\\俄1TV\\综艺节目\\2015年\\09-10\\20151001Мужское  Женское_20151023155633086.avi','','avi','20121003532','','0','LinkOpen2016925');doRecordLog('2016925','20121003532')"> </LI>
+    <LI>播放:<SPAN class=gray>0</SPAN> </LI>
+    <LI>下载:<SPAN class=gray>0</SPAN> </LI>
+    
+    <LI><span>格式：<SPAN class=gray>avi</SPAN> </LI>
+
+    <LI style="display:none"><A href="vod_Group.asp?FirstTypeID=1212">俄1TV</A></LI>
+    <LI style="padding-top:10px"><IMG width="16" height="12" title="添加到我的点播单" alt="添加到我的点播单" src="MeaBox/jr2.gif" style="cursor:hand;"  onmouseover="this.width=18;this.height=14"  onmouseout="this.width=16;this.height=12" onclick="javascript:AddMyDianboForm('2016925','20121003532');"></LI>
+  </UL></DIV></LI>
+  
+   <LI>
+
+  <DIV class=hotting-left><IMG alt=20150914Short Film   src="http://202.116.194.117/F//柬埔寨语/其他节目/20150914short film_20151023155558601.jpg" width="100" height="70" style="cursor:hand"  onclick="javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=2016924');" ></DIV>
+  <DIV class=hotting-right>
+  <DIV class=movieName>  <A href="javascript:void(0)" title=20150914Short Film   onclick="javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=2016924');"  ><div style="width:310px; overflow: hidden;white-space:nowrap; text-overflow:ellipsis;"><span id="P2016924" >20150914Short Film</span></div></A> </DIV>
+  <SPAN   class=gray>本节目由一位法国导演拍摄，以微电影的形式介绍了柬埔寨的传统习俗。</SPAN>   <a href="javascript:void(0)" title=20150914Short Film  onclick="javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=2016924');" >[查看详情]</A> 
+  <UL class=hottingTool>
+    <LI><IMG  title="P2P播放 20150914Short Film" alt="P2P播放 20150914Short Film" src="MeaBox/play_p2p.gif" style="cursor:hand"   onclick="javascript:openWin('mediaplayer.asp?playid=2016924&LXJ=0','2016924','20121003532','');doRecordLog('2016924','20121003532')"></LI>
+    <LI><a href="javascript:void(0);" id="LinkOpen2016924" style="display:none">播放</a><IMG  alt="播放 20150914Short Film" src="MeaBox/play.gif" style="cursor:hand;" onclick="javascript:OpenPlayer('2016924','20150914ShortFilm','F:\\柬埔寨语\\其他节目\\20150914Short Film_20151023155558601.avi','','avi','20121003532','','0','LinkOpen2016924');doRecordLog('2016924','20121003532')"> </LI>
+    <LI>播放:<SPAN class=gray>0</SPAN> </LI>
+    <LI>下载:<SPAN class=gray>0</SPAN> </LI>
+    
+    <LI><span>格式：<SPAN class=gray>avi</SPAN> </LI>
+
+    <LI style="display:none"><A href="vod_Group.asp?FirstTypeID=6506">柬埔寨语</A></LI>
+    <LI style="padding-top:10px"><IMG width="16" height="12" title="添加到我的点播单" alt="添加到我的点播单" src="MeaBox/jr2.gif" style="cursor:hand;"  onmouseover="this.width=18;this.height=14"  onmouseout="this.width=16;this.height=12" onclick="javascript:AddMyDianboForm('2016924','20121003532');"></LI>
+  </UL></DIV></LI>
+  
+   <LI>
+
+  <DIV class=hotting-left><IMG alt=20150914ភាពយន្តឯកសារ   src="http://202.116.194.117/F//柬埔寨语/历史文化/20150914ភាពយន្តឯកសារ_20151023155337876.jpg" width="100" height="70" style="cursor:hand"  onclick="javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=2016923');" ></DIV>
+  <DIV class=hotting-right>
+  <DIV class=movieName>  <A href="javascript:void(0)" title=20150914ភាពយន្តឯកសារ   onclick="javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=2016923');"  ><div style="width:310px; overflow: hidden;white-space:nowrap; text-overflow:ellipsis;"><span id="P2016923" >20150914ភាពយន្តឯកសារ</span></div></A> </DIV>
+  <SPAN   class=gray>纪录片，介绍了柬埔寨的历史，真实还原了当时柬埔寨的社会现状。</SPAN>   <a href="javascript:void(0)" title=20150914ភាពយន្តឯកសារ  onclick="javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=2016923');" >[查看详情]</A> 
+  <UL class=hottingTool>
+    <LI><IMG  title="P2P播放 20150914ភាពយន្តឯកសារ" alt="P2P播放 20150914ភាពយន្តឯកសារ" src="MeaBox/play_p2p.gif" style="cursor:hand"   onclick="javascript:openWin('mediaplayer.asp?playid=2016923&LXJ=0','2016923','20121003532','');doRecordLog('2016923','20121003532')"></LI>
+    <LI><a href="javascript:void(0);" id="LinkOpen2016923" style="display:none">播放</a><IMG  alt="播放 20150914ភាពយន្តឯកសា���" src="MeaBox/play.gif" style="cursor:hand;" onclick="javascript:OpenPlayer('2016923','20150914ភាពយន្តឯកសារ','F:\\柬埔寨语\\历史文化\\20150914ភាពយន្តឯកសារ_20151023155337876.avi','','avi','20121003532','','0','LinkOpen2016923');doRecordLog('2016923','20121003532')"> </LI>
+    <LI>播放:<SPAN class=gray>0</SPAN> </LI>
+    <LI>下载:<SPAN class=gray>0</SPAN> </LI>
+    
+    <LI><span>格式：<SPAN class=gray>avi</SPAN> </LI>
+
+    <LI style="display:none"><A href="vod_Group.asp?FirstTypeID=6506">柬埔寨语</A></LI>
+    <LI style="padding-top:10px"><IMG width="16" height="12" title="添加到我的点播单" alt="添加到我的点播单" src="MeaBox/jr2.gif" style="cursor:hand;"  onmouseover="this.width=18;this.height=14"  onmouseout="this.width=16;this.height=12" onclick="javascript:AddMyDianboForm('2016923','20121003532');"></LI>
+  </UL></DIV></LI>
+  
+   <LI>
+
+  <DIV class=hotting-left><IMG alt=20150914ចំរៀង   src="http://202.116.194.117/F//柬埔寨语/综艺节目/20150914ចំរៀង_20151023154421195.jpg" width="100" height="70" style="cursor:hand"  onclick="javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=2016922');" ></DIV>
+  <DIV class=hotting-right>
+  <DIV class=movieName>  <A href="javascript:void(0)" title=20150914ចំរៀង   onclick="javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=2016922');"  ><div style="width:310px; overflow: hidden;white-space:nowrap; text-overflow:ellipsis;"><span id="P2016922" >20150914ចំរៀង</span></div></A> </DIV>
+  <SPAN   class=gray>歌曲«តោលភារណ៏ត្រឹះក្នុងសកម្មភាព»</SPAN>   <a href="javascript:void(0)" title=20150914ចំរៀង  onclick="javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=2016922');" >[查看详情]</A> 
+  <UL class=hottingTool>
+    <LI><IMG  title="P2P播放 20150914ចំរៀង" alt="P2P播放 20150914ចំរៀង" src="MeaBox/play_p2p.gif" style="cursor:hand"   onclick="javascript:openWin('mediaplayer.asp?playid=2016922&LXJ=0','2016922','20121003532','');doRecordLog('2016922','20121003532')"></LI>
+    <LI><a href="javascript:void(0);" id="LinkOpen2016922" style="display:none">播放</a><IMG  alt="播放 20150914ចំរៀង" src="MeaBox/play.gif" style="cursor:hand;" onclick="javascript:OpenPlayer('2016922','20150914ចំរៀង','F:\\柬埔寨语\\综艺节目\\20150914ចំរៀង_20151023154421195.avi','','avi','20121003532','','0','LinkOpen2016922');doRecordLog('2016922','20121003532')"> </LI>
+    <LI>播放:<SPAN class=gray>0</SPAN> </LI>
+    <LI>下载:<SPAN class=gray>0</SPAN> </LI>
+    
+    <LI><span>格式：<SPAN class=gray>avi</SPAN> </LI>
+
+    <LI style="display:none"><A href="vod_Group.asp?FirstTypeID=6506">柬埔寨语</A></LI>
+    <LI style="padding-top:10px"><IMG width="16" height="12" title="添加到我的点播单" alt="添加到我的点播单" src="MeaBox/jr2.gif" style="cursor:hand;"  onmouseover="this.width=18;this.height=14"  onmouseout="this.width=16;this.height=12" onclick="javascript:AddMyDianboForm('2016922','20121003532');"></LI>
+  </UL></DIV></LI>
+  
+   <LI>
+
+  <DIV class=hotting-left><IMG alt=20150914ភាពយន្តនាទី   src="http://202.116.194.117/F//柬埔寨语/影视节目/20150914ភាពយន្តនាទី_20151023154243470.jpg" width="100" height="70" style="cursor:hand"  onclick="javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=2016921');" ></DIV>
+  <DIV class=hotting-right>
+  <DIV class=movieName>  <A href="javascript:void(0)" title=20150914ភាពយន្តនាទី   onclick="javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=2016921');"  ><div style="width:310px; overflow: hidden;white-space:nowrap; text-overflow:ellipsis;"><span id="P2016921" >20150914ភាពយន្តនាទី</span></div></A> </DIV>
+  <SPAN   class=gray>电视剧《高家万岁》。</SPAN>   <a href="javascript:void(0)" title=20150914ភាពយន្តនាទី  onclick="javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=2016921');" >[查看详情]</A> 
+  <UL class=hottingTool>
+    <LI><IMG  title="P2P播放 20150914ភាពយន្តនាទី" alt="P2P播放 20150914ភាពយន្តនាទី" src="MeaBox/play_p2p.gif" style="cursor:hand"   onclick="javascript:openWin('mediaplayer.asp?playid=2016921&LXJ=0','2016921','20121003532','');doRecordLog('2016921','20121003532')"></LI>
+    <LI><a href="javascript:void(0);" id="LinkOpen2016921" style="display:none">播放</a><IMG  alt="播放 20150914ភាពយន្តនាទី" src="MeaBox/play.gif" style="cursor:hand;" onclick="javascript:OpenPlayer('2016921','20150914ភាពយន្តនាទី','F:\\柬埔寨语\\影视节目\\20150914ភាពយន្តនាទី_20151023154243470.avi','','avi','20121003532','','0','LinkOpen2016921');doRecordLog('2016921','20121003532')"> </LI>
+    <LI>播放:<SPAN class=gray>0</SPAN> </LI>
+    <LI>下载:<SPAN class=gray>0</SPAN> </LI>
+    
+    <LI><span>格式：<SPAN class=gray>avi</SPAN> </LI>
+
+    <LI style="display:none"><A href="vod_Group.asp?FirstTypeID=6506">柬埔寨语</A></LI>
+    <LI style="padding-top:10px"><IMG width="16" height="12" title="添加到我的点播单" alt="添加到我的点播单" src="MeaBox/jr2.gif" style="cursor:hand;"  onmouseover="this.width=18;this.height=14"  onmouseout="this.width=16;this.height=12" onclick="javascript:AddMyDianboForm('2016921','20121003532');"></LI>
+  </UL></DIV></LI>
+  
+  </UL></DIV>
+</DIV>
+<DIV id=body-right style="width: 240px; ">
+
+
+<!--热门标签-->
+<DIV class=whiteBox>
+<H4>视频精选：</H4>
+<UL class=whiteBoxList>
+<li><div style='float:left;width:210px; overflow: hidden;white-space:nowrap; text-overflow:ellipsis;'><a href='javascript:void(0)' title=(BBC)英女王和习主席在宴会上的讲话-20151021   onclick=javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=2016580');>(BBC)英女王和习主席在宴会上的讲话-20151021</a></div></li><li><div style='float:left;width:210px; overflow: hidden;white-space:nowrap; text-overflow:ellipsis;'><a href='javascript:void(0)' title=(BBC)习近平主席在英国议会的演讲-20151020   onclick=javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=2016542');>(BBC)习近平主席在英国议会的演讲-20151020</a></div></li><li><div style='float:left;width:210px; overflow: hidden;white-space:nowrap; text-overflow:ellipsis;'><a href='javascript:void(0)' title=周方银作客广东卫视“直播全球”栏目_20151020   onclick=javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=2016096');>周方银作客广东卫视“直播全球”栏目_20151020</a></div></li><li><div style='float:left;width:210px; overflow: hidden;white-space:nowrap; text-overflow:ellipsis;'><a href='javascript:void(0)' title=The world right now_20151020   onclick=javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=2015740');>The world right now_20151020</a></div></li><li><div style='float:left;width:210px; overflow: hidden;white-space:nowrap; text-overflow:ellipsis;'><a href='javascript:void(0)' title=周方银作客广东卫视“直播全球”-20151019   onclick=javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=2015725');>周方银作客广东卫视“直播全球”-20151019</a></div></li><li><div style='float:left;width:210px; overflow: hidden;white-space:nowrap; text-overflow:ellipsis;'><a href='javascript:void(0)' title=BBC World News_20151018(12am)   onclick=javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=2015412');>BBC World News_20151018(12am)</a></div></li><li><div style='float:left;width:210px; overflow: hidden;white-space:nowrap; text-overflow:ellipsis;'><a href='javascript:void(0)' title=CNN Newsroom_20151018(12am)   onclick=javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=2015405');>CNN Newsroom_20151018(12am)</a></div></li><li><div style='float:left;width:210px; overflow: hidden;white-space:nowrap; text-overflow:ellipsis;'><a href='javascript:void(0)' title=2015广交会：我校教师谈进出口贸易   onclick=javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=2015184');>2015广交会：我校教师谈进出口贸易</a></div></li><li><div style='float:left;width:210px; overflow: hidden;white-space:nowrap; text-overflow:ellipsis;'><a href='javascript:void(0)' title=El doodle del Google   onclick=javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=1975464');>El doodle del Google</a></div></li><li><div style='float:left;width:210px; overflow: hidden;white-space:nowrap; text-overflow:ellipsis;'><a href='javascript:void(0)' title=烈士纪念日向人民英雄纪念碑敬献花篮仪式   onclick=javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=1971681');>烈士纪念日向人民英雄纪念碑敬献花篮仪式</a></div></li><li><div style='float:left;width:210px; overflow: hidden;white-space:nowrap; text-overflow:ellipsis;'><a href='javascript:void(0)' title=周方银作客广东卫视“直播全球”-20150929   onclick=javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=1971647');>周方银作客广东卫视“直播全球”-20150929</a></div></li><li><div style='float:left;width:210px; overflow: hidden;white-space:nowrap; text-overflow:ellipsis;'><a href='javascript:void(0)' title=20150928南校军训汇演2   onclick=javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=1971406');>20150928南校军训汇演2</a></div></li><li><div style='float:left;width:210px; overflow: hidden;white-space:nowrap; text-overflow:ellipsis;'><a href='javascript:void(0)' title=20150928南校军训汇演1   onclick=javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=1971392');>20150928南校军训汇演1</a></div></li><li><div style='float:left;width:210px; overflow: hidden;white-space:nowrap; text-overflow:ellipsis;'><a href='javascript:void(0)' title=开罗   onclick=javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=1971293');>开罗</a></div></li><li><div style='float:left;width:210px; overflow: hidden;white-space:nowrap; text-overflow:ellipsis;'><a href='javascript:void(0)' title=2015级新生军训汇报表演暨总结表彰大会（北校区）   onclick=javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=1970969');>2015级新生军训汇报表演暨总结表彰大会（北校区）</a></div></li><li><div style='float:left;width:210px; overflow: hidden;white-space:nowrap; text-overflow:ellipsis;'><a href='javascript:void(0)' title=第12届中国-东盟博览会开幕式(CCTV-NEWS)   onclick=javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=1938878');>第12届中国-东盟博览会开幕式(CCTV-NEWS)</a></div></li><li><div style='float:left;width:210px; overflow: hidden;white-space:nowrap; text-overflow:ellipsis;'><a href='javascript:void(0)' title=奥朗德先贤祠讲话   onclick=javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=1936532');>奥朗德先贤祠讲话</a></div></li><li><div style='float:left;width:210px; overflow: hidden;white-space:nowrap; text-overflow:ellipsis;'><a href='javascript:void(0)' title=中央台“焦点访谈”播出安全教育内容   onclick=javascript:openWinDetail('VodAdmin/FileDetailedInfo.asp?thisid=1798988');>中央台“焦点访谈”播出安全教育内容</a></div></li>
+</UL>
+
+</DIV>
+
+<DIV class=lineBox>
+<!--
+<H4>排行榜</H4>
+<DIV class=whiteBox-S>
+
+<UL class=whiteBoxList-right>
+
+</UL></DIV>
+-->
+<DIV class=whiteBox-S><!--热评-->
+<H4>热评</H4>
+<UL class=whiteBoxList-right>
+
+</UL></DIV>
+</DIV>
+<DIV class=whiteBox id="div_my_play">
+<H4>我最近点播的 </H4>
+<UL class=whiteBoxList id="playhistory" ></UL>
+</DIV>
+</DIV></DIV>
+
+<!--页尾-->
+<DIV id=footer >
+<UL id=footerMain >
+  <LI><a href="mailto:DTV@mail.gdufs.edu.cn" target="_blank"> 留言反馈 </a> | 
+	广东外语外贸大学 © Copyright 2009 </LI>
+</ul>
+</div>
+
+<div id="pic" style="filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(sizingMethod=scale);"></div>
+<script src="http://202.116.194.8/web/vod/lltj/stat.js"></script>
+
+</BODY>
+</HTML>
