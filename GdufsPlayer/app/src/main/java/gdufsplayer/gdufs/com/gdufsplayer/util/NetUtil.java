@@ -19,6 +19,5 @@ public class NetUtil {
         if (cm == null)
             return false;
         return cm.getActiveNetworkInfo().getType() == ConnectivityManager.TYPE_WIFI;
-
     }
 }
