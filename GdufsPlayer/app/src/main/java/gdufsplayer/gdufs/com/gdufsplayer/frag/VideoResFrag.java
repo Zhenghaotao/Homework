@@ -6,6 +6,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import gdufsplayer.gdufs.com.gdufsplayer.base.BaseFragment;
+
 /**
  * Created by zhenghaotao on 16-1-6.
  */

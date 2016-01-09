@@ -1,4 +1,4 @@
-package gdufsplayer.gdufs.com.gdufsplayer.application;
+package gdufsplayer.gdufs.com.gdufsplayer;
 
 import android.app.Application;
 import android.content.Context;

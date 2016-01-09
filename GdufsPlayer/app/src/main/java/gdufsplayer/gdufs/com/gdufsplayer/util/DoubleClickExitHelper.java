@@ -6,6 +6,8 @@ import android.os.Looper;
 import android.view.KeyEvent;
 import android.widget.Toast;
 
+import gdufsplayer.gdufs.com.gdufsplayer.GdufsManager;
+
 public class DoubleClickExitHelper {
 
     private final Activity mActivity;
@@ -31,13 +33,15 @@ public class DoubleClickExitHelper {
             if(mBackToast != null){
                 mBackToast.cancel();
             }
-            mActivity.finish();
+            // 退出
+            GdufsManager.getAppManager().appExit(mActivity);
             return true;
         } else {
             isOnKeyBacking = true;
             if(mBackToast == null) {
-
+                mBackToast = Toast.makeText(mActivity, R.string.tip_double_click_exit, 2000);
             }
+            mBackToast.show();
             mHandler.postDelayed(onBackTimeRunnable, 2000);
             return true;
         }
