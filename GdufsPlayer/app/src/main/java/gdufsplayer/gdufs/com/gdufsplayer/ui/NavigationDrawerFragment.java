@@ -18,6 +18,7 @@ import android.widget.TextView;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import gdufsplayer.gdufs.com.gdufsplayer.GdufsApplication;
 import gdufsplayer.gdufs.com.gdufsplayer.base.BaseFragment;
 
 /**
@@ -100,36 +101,16 @@ public class NavigationDrawerFragment extends BaseFragment implements View.OnCli
     public void onClick(View v) {
         int id = v.getId();
         switch (id) {
-            case R.id.menu_item_quests:
-                UIHelper.showSimpleBack(getActivity(), SimpleBackPage.QUEST);
-                break;
-            case R.id.menu_item_opensoft:
-                UIHelper.showSimpleBack(getActivity(),
-                        SimpleBackPage.OPENSOURCE_SOFTWARE);
-                break;
-            case R.id.menu_item_blog:
-                UIHelper.showSimpleBack(getActivity(), SimpleBackPage.BLOG);
-                break;
-            case R.id.menu_item_gitapp:
+            case R.id.menu_item_video_res:
 
-                boolean res = TDevice.openAppActivity(getActivity(),
-                        "net.oschina.gitapp", "net.oschina.gitapp.WelcomePage");
+                break;
+            case R.id.menu_item_video_download:
 
-                if (!res) {
-                    if (!TDevice.isHaveMarket(getActivity())) {
-                        UIHelper.openSysBrowser(getActivity(),
-                                "http://git.oschina.net/appclient");
-                    } else {
-                        TDevice.gotoMarket(getActivity(), "net.oschina.gitapp");
-                    }
-                }
                 break;
-            case R.id.menu_item_setting:
-                UIHelper.showSetting(getActivity());
+            case R.id.menu_item_video_local:
+
                 break;
-            case R.id.menu_item_theme:
-                switchTheme();
-                break;
+
             default:
                 break;
 
@@ -144,7 +125,7 @@ public class NavigationDrawerFragment extends BaseFragment implements View.OnCli
     }
 
     private void switchTheme() {
-        if (AppContext.getNightModeSwitch()) {
+        if (GdufsApplication.getNightModeSwitch()) {
             AppContext.setNightModeSwitch(false);
         } else {
             AppContext.setNightModeSwitch(true);
