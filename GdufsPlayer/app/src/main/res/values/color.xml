@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="drawer_bottom_line">#DFDFDF</color>
+    <color name="gray">#ffc3c3c3</color>
+    <color name="actionbar_color">#019587</color>
+    <color name="ldrawer_color">#FFFFFF</color>
+
+
+    <color name="black">#FF000000</color>
+</resources>
