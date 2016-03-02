@@ -6,4 +6,4 @@
     android:paddingLeft="20dp"
     android:paddingTop="10dp"
     android:textColor="@color/actionbar_color"
-      />
+    />

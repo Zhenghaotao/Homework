@@ -1,36 +1,25 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- 菜单ImageView的样式 -->
-    <style name="MenuItemImageViewStyle">
-        <item name="android:layout_width">24dip</item>
-        <item name="android:layout_height">24dip</item>
-        <item name="android:layout_marginRight">15dip</item>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
     </style>
 
-    <!-- 菜单TextView的样式 -->
-    <style name="MenuItemTextViewStyle">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:textColor">@drawable/drawer_menu_text</item>
-        <item name="android:drawablePadding">10.0dip</item>
-        <item name="android:textSize">16.0dip</item>
+    <style name="TimeAppTheme" parent="android:Theme.Holo.Light.DarkActionBar">
+        <item name="android:actionBarStyle">@style/ActionBar</item>
+        <item name="android:actionOverflowButtonStyle">@style/OverFlow3</item>
     </style>
-
-
-    <!-- app main menu style start! -->
-    <!-- 菜单layout的样式 -->
-    <style name="MenuItemLayoutStyle">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:minHeight">55dip</item>
-        <item name="android:gravity">center_vertical</item>
-        <item name="android:orientation">horizontal</item>
-        <item name="android:paddingLeft">15dip</item>
-        <item name="android:paddingRight">15dip</item>
-        <item name="android:background">?attr/layout_item_bg</item>
+    <style name="ActionBar" parent="android:Widget.ActionBar">
+        <item name="android:background">@color/actionbar_color</item>
+        <item name="android:icon">@android:color/transparent</item>
+        <item name="android:titleTextStyle">@style/ActionBar.TitleText</item>
     </style>
+    <style name="OverFlow3" parent="@android:style/Widget.Holo.ActionButton.Overflow">
 
-
-
+    </style>
+    <style name="ActionBar.TitleText" parent="android:TextAppearance.Holo.Widget.ActionBar.Title">
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textSize">18sp</item>
+    </style>
 
 </resources>
