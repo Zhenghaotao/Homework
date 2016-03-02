@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import gdufs.gdufsplayer.R;
 
 /**
- * Created by taotao on 16-3-2.
+ * 本地视频列表
  */
 public class LocalVideoFragment extends Fragment {
 

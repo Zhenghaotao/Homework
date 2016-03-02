@@ -21,6 +21,13 @@
 
     <string name="no_vide_file">没有视频文件</string>
 
+    <string name="sd_shared">请您先退出USB模式,再运行该应用</string>
+    <string name="sd_unmounted">SD卡未加载到手机</string>
+    <string name="sd_removed">未找到SD卡</string>
+    <string name="sd_noinsert">未找到SD卡</string>
+    <string name="duration_tag">影片时长:</string>
+    <string name="button_ok">确定</string>
+
 
 
 </resources>
