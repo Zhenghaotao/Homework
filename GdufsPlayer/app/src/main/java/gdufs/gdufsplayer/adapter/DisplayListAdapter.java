@@ -43,7 +43,8 @@ public class DisplayListAdapter extends BaseAdapter {
     /**hejn, optimizing thumbnail list, 20101210 end*/
     public DisplayListAdapter(Context context) {
         this.mContext = context;
-        mDefaultDrawable = context.getResources().getDrawable(R.mipmap.bg_default);
+        mDefaultDrawable = context.getResources().getDrawable(R.mipmap
+                .bg_default);
         mInflater = LayoutInflater.from(context);
     }
 

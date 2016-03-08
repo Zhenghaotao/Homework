@@ -3,4 +3,95 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="10.0dip">
+
+
+
+            <RelativeLayout
+                android:id="@+id/phone_wrapper"
+                android:layout_width="fill_parent"
+                android:layout_height="49.0dip"
+                android:clickable="true">
+
+                <ImageView
+                    android:id="@+id/email_icon"
+                    android:layout_width="25.0dip"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="10.0dip"
+                    android:src="@mipmap/ic_login_user" />
+
+                <EditText
+                    android:id="@+id/et_account"
+                    style="@style/LoginEidtCont"
+                    android:layout_toRightOf="@id/email_icon"
+                    android:hint="@string/account"
+                    android:inputType="number"
+                    android:lines="1"
+                    android:imeOptions="actionGo"
+                    android:nextFocusForward="@+id/password" />
+
+                <ImageView
+                    android:layout_width="fill_parent"
+                    android:layout_height="1.0px"
+                    android:layout_alignParentBottom="true"
+                    android:background="@color/common_line" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/pass_wrapper"
+                android:layout_width="fill_parent"
+                android:layout_height="49.0dip"
+                android:clickable="true">
+
+                <ImageView
+                    android:id="@+id/pwd_icon"
+                    android:layout_width="25.0dip"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="10.0dip"
+                    android:src="@mipmap/ic_login_pwd" />
+
+                <EditText
+                    android:id="@+id/et_password"
+                    style="@style/LoginEidtCont"
+                    android:layout_toRightOf="@id/pwd_icon"
+                    android:hint="@string/password"
+                    android:imeOptions="actionGo"
+                    android:inputType="number" />
+
+                <ImageView
+                    android:layout_width="fill_parent"
+                    android:layout_height="1.0px"
+                    android:layout_alignParentBottom="true"
+                    android:background="@color/common_line" />
+
+
+            </RelativeLayout>
+
+            <Button
+                android:id="@+id/btn_login"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="25.0dip"
+                android:background="@drawable/btn_main"
+                android:clickable="true"
+                android:gravity="center"
+                android:paddingBottom="10.0dip"
+                android:paddingTop="10.0dip"
+                android:text="@string/login"
+                android:textColor="@color/white"
+                android:textSize="18.0sp" />
+        </LinearLayout>
+    </LinearLayout>
+
 </LinearLayout>

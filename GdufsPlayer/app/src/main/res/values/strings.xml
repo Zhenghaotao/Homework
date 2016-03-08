@@ -28,6 +28,29 @@
     <string name="duration_tag">影片时长:</string>
     <string name="button_ok">确定</string>
 
+    <string name="confirm_deletefile_isnofile">该文件已经被删除了</string>
+    <string name="fail_deletefile">删除文件失败</string>
 
 
+    <string name="button_cancel">取消</string>
+    <string name="confirm_addvideo">确认要添加此视频吗？</string>
+    <string name="file_notexist">这个文件已经不存在</string>
+
+    <array name="items_for_allVideo_local">
+        <item>播放</item>
+        <item>删除</item>
+    </array>
+    <array name="items_for_externalCaller">
+        <item>播放</item>
+        <item>添加此视频</item>
+    </array>
+
+    <string name="login">登陆</string>
+
+
+    <string name="password">请输入密码</string>
+    <string name="account">请输入学号</string>
+
+    <string name="account_is_null">学号为空</string>
+    <string name="password_is_null">密码不能为空</string>
 </resources>
